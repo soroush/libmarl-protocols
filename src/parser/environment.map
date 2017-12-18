@@ -1,0 +1,17 @@
+include "../environment.hpp";
+include "../state.hpp";
+include "../action.hpp";
+include "../transition.hpp";
+include <vector>;
+
+from ::marl::state* ::marl::state*;
+to ::marl::state* ::marl::state*;
+title ::std::string ::std::string;
+reward float float;
+probability float float;
+environment_type ::marl::environment ::marl::environment;
+state_type ::marl::state* ::marl::state*;
+states_type ::std::vector<::marl::state*> "const ::std::vector<::marl::state*>&";
+action_type ::marl::action* ::marl::action*;
+actions_type ::std::vector<::marl::action*> ::std::vector<::marl::action*>;
+transition_type ::marl::transition* marl::transition*;

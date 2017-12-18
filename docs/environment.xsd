@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+       Markov Decision Process Document Format
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:element name="environment" type="environment_type"/>
+
+    <xs:complexType name="environment_type">
+        <xs:sequence>
+            <xs:element name="title" type="xs:string" maxOccurs="1" minOccurs="1"/>
+            <xs:element name="description" type="xs:string" maxOccurs="1" minOccurs="1"/>
+            <xs:element name="states" type="states_type" maxOccurs="1" minOccurs="1"/>
+            <xs:element name="actions" type="actions_type" maxOccurs="1" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="states_type">
+        <xs:sequence>
+            <xs:element name="state" type="state_type" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="actions_type">
+        <xs:sequence>
+            <xs:element name="action" type="action_type" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="state_type">
+        <xs:attribute name="id" type="xs:nonNegativeInteger" use="required"/>
+        <xs:attribute name="title" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:pattern value="[A-Za-z_][A-Za-z_0-9]*"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="action_type">
+        <xs:sequence>
+            <xs:element name="transition" type="transition_type" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:nonNegativeInteger" use="required"/>
+        <xs:attribute name="from" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:pattern value="[A-Za-z_][A-Za-z_0-9]*"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="title" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:pattern value="[A-Za-z_][A-Za-z_0-9]*"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="transition_type">
+        <xs:attribute name="probability" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:decimal">
+                    <xs:minInclusive value="0.0"/>
+                    <xs:maxInclusive value="1.0"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="reward" type="xs:decimal" use="required"/>
+        <xs:attribute name="to" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:pattern value="[A-Za-z_][A-Za-z_0-9]*"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+</xs:schema>
+
+
