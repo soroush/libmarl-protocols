@@ -38,7 +38,7 @@
 
 #include <xsd/cxx/pre.hxx>
 
-#include "from-pskel.hpp"
+#include "mdp-pskel.hpp"
 
 #include <cassert>
 

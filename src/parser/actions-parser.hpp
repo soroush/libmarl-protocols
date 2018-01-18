@@ -21,16 +21,20 @@
 #ifndef LIBMARL_ACTIONS_PARSER_HPP
 #define LIBMARL_ACTIONS_PARSER_HPP
 
-#include "actions_type-pskel.hpp"
+#include "actions-pskel.hpp"
+#include "action-parser.hpp"
 #include <vector>
 
 namespace marl {
-class actions_parser : public actions_type_pskel {
+class actions_parser : public actions_pskel {
 public:
+	actions_parser();
     void action (::marl::action*) override;
-    std::vector<marl::action*> post_actions_type () override;
+    std::vector<marl::action*> post_actions() override;
+    void set_states(const std::vector<marl::state*>& states);
 private:
     std::vector<marl::action*> m_actions;
+    marl::action_parser m_aparser;
 };
 }
 

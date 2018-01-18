@@ -19,20 +19,52 @@
  */
 
 #include "client-base.hpp"
+#include <flog/flog.hpp>
+#include <chrono>
 
 marl::client_base::client_base() {
-//    cpnet_init();
+    cpnet_init();
+}
+
+marl::client_base::~client_base() {
+    stop();
 }
 
 bool marl::client_base::connect(const std::string& address, uint16_t port) {
-//    m_socket = cpnet_socket(SOCK_STREAM);
-//    if(m_socket <= 0) {
-//        // TODO: log
-//        return false;
-//    }
-//    if(cpnet_connect(m_socket, address.c_str(), port) != 0 ) {
-//        // TODO: log
-//        return false;
-//    }
+    flog::logger* l = flog::logger::instance();
+    m_socket = cpnet_socket(SOCK_STREAM);
+    if(m_socket <= 0) {
+        l->log(flog::level_t::ERROR_, "Unable to create socket!");
+        return false;
+    }
+    if(cpnet_connect(m_socket, address.c_str(), port) != 0) {
+        l->log(flog::level_t::ERROR_, "Unable to connect to `%s':%d", address.c_str(), port);
+        return false;
+    }
     return true;
+}
+
+void marl::client_base::start() {
+    m_is_running.store(true);
+    m_responser = std::thread{&client_base::responser_worker, this};
+    m_receiver = std::thread{&client_base::receiver_worker, this};
+}
+
+void marl::client_base::stop() {
+    m_is_running.store(false);
+    m_responser.join();
+    m_receiver.join();
+}
+
+void marl::client_base::responser_worker() {
+    while(m_is_running.load()) {
+        if(!m_request_sem.wait_for(std::chrono::milliseconds{100})) {
+            continue;
+        }
+        std::lock_guard<std::mutex> lck{m_request_lock};
+        request_base* req = m_requests.front();
+        m_requests.pop_front();
+        response_base* rsp = process_request(req);
+        delete req;
+    }
 }

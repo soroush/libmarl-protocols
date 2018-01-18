@@ -31,8 +31,8 @@
 // in the accompanying FLOSSE file.
 //
 
-#ifndef LIBMARL_PROBABILITY_PSKEL_HPP
-#define LIBMARL_PROBABILITY_PSKEL_HPP
+#ifndef LIBMARL_STATE_POINTER_TYPE_PSKEL_HPP
+#define LIBMARL_STATE_POINTER_TYPE_PSKEL_HPP
 
 #ifndef XSD_CXX11
 #define XSD_CXX11
@@ -53,7 +53,7 @@
 
 // Forward declarations
 //
-class probability_pskel;
+class state_pointer_type_pskel;
 
 #ifndef XSD_USE_CHAR
 #define XSD_USE_CHAR
@@ -75,6 +75,7 @@ class probability_pskel;
 #include <xsd/cxx/parser/xerces/elements.hxx>
 
 #include <vector>
+#include <cstdint>
 #include "../transition.hpp"
 #include "../state.hpp"
 #include "../environment.hpp"
@@ -273,7 +274,7 @@ namespace xml_schema
   typedef ::xsd::cxx::parser::xerces::document< char > document;
 }
 
-class probability_pskel: public virtual ::xml_schema::decimal_pskel
+class state_pointer_type_pskel: public virtual ::xml_schema::string_pskel
 {
   public:
   // Parser callbacks. Override them in your implementation.
@@ -281,8 +282,8 @@ class probability_pskel: public virtual ::xml_schema::decimal_pskel
   // virtual void
   // pre ();
 
-  virtual float
-  post_probability () = 0;
+  virtual ::marl::state*
+  post_state_pointer_type () = 0;
 };
 
 #include <xsd/cxx/post.hxx>
@@ -292,4 +293,4 @@ class probability_pskel: public virtual ::xml_schema::decimal_pskel
 //
 // End epilogue.
 
-#endif // LIBMARL_PROBABILITY_PSKEL_HPP
+#endif // LIBMARL_STATE_POINTER_TYPE_PSKEL_HPP

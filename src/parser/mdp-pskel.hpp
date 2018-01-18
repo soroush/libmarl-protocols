@@ -31,8 +31,8 @@
 // in the accompanying FLOSSE file.
 //
 
-#ifndef LIBMARL_TO_PSKEL_HPP
-#define LIBMARL_TO_PSKEL_HPP
+#ifndef LIBMARL_MDP_PSKEL_HPP
+#define LIBMARL_MDP_PSKEL_HPP
 
 #ifndef XSD_CXX11
 #define XSD_CXX11
@@ -53,7 +53,6 @@
 
 // Forward declarations
 //
-class to_pskel;
 
 #ifndef XSD_USE_CHAR
 #define XSD_USE_CHAR
@@ -73,12 +72,6 @@ class to_pskel;
 #include <xsd/cxx/parser/validating/xml-schema-pskel.hxx>
 #include <xsd/cxx/parser/validating/xml-schema-pimpl.hxx>
 #include <xsd/cxx/parser/xerces/elements.hxx>
-
-#include <vector>
-#include "../transition.hpp"
-#include "../state.hpp"
-#include "../environment.hpp"
-#include "../action.hpp"
 
 namespace xml_schema
 {
@@ -273,17 +266,25 @@ namespace xml_schema
   typedef ::xsd::cxx::parser::xerces::document< char > document;
 }
 
-class to_pskel: public virtual ::xml_schema::string_pskel
-{
-  public:
-  // Parser callbacks. Override them in your implementation.
-  //
-  // virtual void
-  // pre ();
+#include "id_type-pskel.hpp"
 
-  virtual ::marl::state*
-  post_to () = 0;
-};
+#include "title_type-pskel.hpp"
+
+#include "state_pointer_type-pskel.hpp"
+
+#include "probability_type-pskel.hpp"
+
+#include "environment-pskel.hpp"
+
+#include "states-pskel.hpp"
+
+#include "actions-pskel.hpp"
+
+#include "state-pskel.hpp"
+
+#include "action-pskel.hpp"
+
+#include "transition-pskel.hpp"
 
 #include <xsd/cxx/post.hxx>
 
@@ -292,4 +293,4 @@ class to_pskel: public virtual ::xml_schema::string_pskel
 //
 // End epilogue.
 
-#endif // LIBMARL_TO_PSKEL_HPP
+#endif // LIBMARL_MDP_PSKEL_HPP

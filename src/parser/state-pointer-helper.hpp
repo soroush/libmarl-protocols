@@ -34,10 +34,10 @@ class state_pointer_helper {
 public:
     state_pointer_helper() = default;
     virtual ~state_pointer_helper() = default;
+    void set_states(const std::vector<marl::state*>& states);
 protected:
     marl::state* find(const std::string& name) const;
     marl::state* find(uint32_t id) const;
-    void set_states(const std::vector<marl::state*>& states);
     std::vector<marl::state*> m_states;
 };
 }

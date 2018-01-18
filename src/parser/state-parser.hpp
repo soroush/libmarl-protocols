@@ -21,18 +21,24 @@
 #ifndef LIBMARL_STATE_PARSER_HPP
 #define LIBMARL_STATE_PARSER_HPP
 
-#include "state_type-pskel.hpp"
+#include "state-pskel.hpp"
+#include "title-parser.hpp"
+#include "id-parser.hpp"
 #include <cstdint>
 
 namespace marl {
-class state_parser : public state_type_pskel {
+class state_parser : public state_pskel {
 public:
-    void id (unsigned long long) override;
-    void title (std::string) override;
-    marl::state* post_state_type () override;
+	state_parser();
+    void id(uint32_t) override;
+    void title(std::string) override;
+    marl::state* post_state() override;
 private:
     uint32_t m_id;
     std::string m_name;
+    marl::id_parser m_id_parser;
+    marl::title_parser m_title_parser;
+
 };
 }
 

@@ -20,10 +20,14 @@
 
 #include "states-parser.hpp"
 
+marl::states_parser::states_parser(): states_pskel() {
+    state_parser(m_sparser);
+}
+
 void marl::states_parser::state(marl::state* s) {
     this->m_states.push_back(s);
 }
 
-std::vector<marl::state*> marl::states_parser::post_states_type() {
+std::vector<marl::state*> marl::states_parser::post_states() {
     return this->m_states;
 }

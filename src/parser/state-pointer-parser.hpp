@@ -18,12 +18,21 @@
  * along with libmarl_protocols.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "from-parser.hpp"
+#ifndef LIBMARL_STATE_POINTER_PARSER_HPP
+#define LIBMARL_STATE_POINTER_PARSER_HPP
 
-marl::state* marl::from_parser::post_from() {
-    return find(post_string());
+#include "state_pointer_type-pskel.hpp"
+#include "state-pointer-helper.hpp"
+
+namespace marl {
+
+class state_pointer_parser :
+    public state_pointer_type_pskel,
+    public details::state_pointer_helper,
+    public xml_schema::string_pimpl {
+public:
+    marl::state* post_state_pointer_type() override;
+};
 }
 
-std::string marl::from_parser::post_string() {
-	return std::string{};
-}
+#endif // LIBMARL_STATE_POINTER_PARSER_HPP

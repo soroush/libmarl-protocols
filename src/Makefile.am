@@ -25,7 +25,14 @@ AM_CXXFLAGS = --pedantic -Wall -Werror -DBUILD_LIBMARL_PROTOCOLS
 lib_LTLIBRARIES = libmarl_protocols.la
 
 libmarl_protocols_la_CPPFLAGS = \
+    $(CPNET_CFLAGS) \
+    $(FLOG_CFLAGS) \
     $(XERCES_CFLAGS)
+
+libmarl_protocols_la_LIBADD = \
+    $(CPNET_LIBS) \
+    $(FLOG_LIBS) \
+    $(XERCES_LIBS)
 
 libmarl_protocols_la_LDFLAGS = -version-info $(LIBMARL_SO_VERSION)
 libmarl_protocols_la_LDFLAGS += -fvisibility=hidden
@@ -34,18 +41,6 @@ libmarl_protocols_includedir = $(includedir)/libmarl-protocols
 nobase_libmarl_protocols_include_HEADERS =  \
     libmarl-exports.hpp \
     details/named-object.hpp \
-    parser/environment-parser.hpp \
-    parser/from-pskel.hpp \
-    parser/title-pskel.hpp \
-    parser/to-pskel.hpp \
-    parser/environment-pskel.hpp \
-    parser/probability-pskel.hpp \
-    parser/state_type-pskel.hpp \
-    parser/transition_type-pskel.hpp \
-    parser/states_type-pskel.hpp \
-    parser/actions_type-pskel.hpp \
-    parser/environment_type-pskel.hpp \
-    parser/action_type-pskel.hpp \
     semaphore.hpp \
     message-base.hpp \
     client-base.hpp \
@@ -60,31 +55,8 @@ nobase_libmarl_protocols_include_HEADERS =  \
     action.hpp \
     environment.hpp
 
-nobase_libmarl_protocols_include_HEADERS +=  \
-    parser/state-parser.hpp \
-    parser/states-parser.hpp \
-    parser/action-parser.hpp \
-    parser/actions-parser.hpp \
-    parser/probability-parser.hpp \
-    parser/state-pointer-helper.hpp \
-    parser/from-parser.hpp \
-    parser/transition-parser.hpp
-
 libmarl_protocols_la_SOURCES = \
-    $(libmarl_protocols_include_HEADERS) \
     details/named-object.cpp \
-    parser/environment-parser.cpp \
-    parser/to-pskel.cpp \
-    parser/environment-pskel.cpp \
-    parser/probability-pskel.cpp \
-    parser/from-pskel.cpp \
-    parser/title-pskel.cpp \
-    parser/state_type-pskel.cpp \
-    parser/transition_type-pskel.cpp \
-    parser/states_type-pskel.cpp \
-    parser/actions_type-pskel.cpp \
-    parser/action_type-pskel.cpp \
-    parser/environment_type-pskel.cpp \
     semaphore.cpp \
     message-base.cpp \
     message-base-impl.hpp \
@@ -106,16 +78,51 @@ libmarl_protocols_la_SOURCES = \
     action.cpp \
     environment.cpp
 
-libmarl_protocols_la_SOURCES += \
-    parser/state-parser.cpp \
-    parser/states-parser.cpp \
-    parser/action-parser.cpp \
-    parser/actions-parser.cpp \
-    parser/probability-parser.cpp \
-    parser/state-pointer-helper.cpp \
-    parser/to-parser.cpp \
-    parser/from-parser.cpp \
-    parser/transition-parser.cpp
+# Parser implementation
 
-libmarl_protocols_la_LIBADD = \
-    $(XERCES_LIBS)
+nobase_libmarl_protocols_include_HEADERS +=  \
+    parser/mdp-pskel.hpp \
+    parser/environment-pskel.hpp \
+    parser/environment-parser.hpp \
+    parser/state-pskel.hpp \
+    parser/state-parser.hpp \
+    parser/states-pskel.hpp \
+    parser/states-parser.hpp \
+    parser/state_pointer_type-pskel.hpp \
+    parser/probability-parser.hpp \
+    parser/probability_type-pskel.hpp \
+    parser/state-pointer-parser.hpp \
+    parser/state-pointer-helper.hpp \
+    parser/transition-parser.hpp \
+    parser/transition-pskel.hpp \
+    parser/title-parser.hpp \
+    parser/title_type-pskel.hpp \
+    parser/id-parser.hpp \
+    parser/action-parser.hpp \
+    parser/action-pskel.hpp \
+    parser/actions-parser.hpp \
+    parser/actions-pskel.hpp
+
+
+libmarl_protocols_la_SOURCES += \
+    parser/mdp-pskel.cpp \
+    parser/environment-pskel.cpp \
+    parser/environment-parser.cpp \
+    parser/state-pskel.cpp \
+    parser/state-parser.cpp \
+    parser/states-pskel.cpp \
+    parser/states-parser.cpp \
+    parser/state_pointer_type-pskel.cpp \
+    parser/probability-parser.cpp \
+    parser/probability_type-pskel.cpp \
+    parser/state-pointer-parser.cpp \
+    parser/state-pointer-helper.cpp \
+    parser/transition-parser.cpp \
+    parser/transition-pskel.cpp \
+    parser/title-parser.cpp \
+    parser/title_type-pskel.cpp \
+    parser/id-parser.cpp \
+    parser/action-parser.cpp \
+    parser/action-pskel.cpp \
+    parser/actions-parser.cpp \
+    parser/actions-pskel.cpp

@@ -20,25 +20,42 @@
 
 #include "action-parser.hpp"
 
-void marl::action_parser::transition(marl::transition* t) {
-    this->m_transitions.push_back(t);
+marl::action_parser::action_parser() :
+		action_pskel(), i{0}, f(nullptr) {
+	this->from_parser(m_fparser);
+	this->transition_parser(m_tparser);
+	this->title_parser(m_title_parser);
+	this->id_parser(m_id_parser);
 }
 
-void marl::action_parser::id(unsigned long long _i) {
-    this->i = static_cast<uint32_t>(_i);
+void marl::action_parser::transition(marl::transition* t) {
+	this->m_transitions.push_back(t);
+}
+
+void marl::action_parser::id(uint32_t _i) {
+	this->i = _i;
 
 }
 
 void marl::action_parser::from(marl::state* s) {
-    this->f = s;
+	this->f = s;
 }
 
 void marl::action_parser::title(std::string n) {
-    this->t = n;
+	this->t = n;
 }
 
-marl::action* marl::action_parser::post_action_type() {
-    marl::action* a = new marl::action(t, i);
-    a->set_transitions(std::move(m_transitions));
-    return a;
+marl::action* marl::action_parser::post_action() {
+	marl::action* a = new marl::action(t, i, f);
+	a->set_transitions(std::move(m_transitions));
+	return a;
+}
+
+void marl::action_parser::set_states(const std::vector<marl::state*>& states) {
+	m_fparser.set_states(states);
+	m_tparser.set_states(states);
+}
+
+void marl::action_parser::pre() {
+	m_transitions.clear();
 }

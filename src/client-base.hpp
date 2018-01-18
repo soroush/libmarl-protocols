@@ -26,6 +26,8 @@
 #include <cstdint>
 #include <list>
 #include <mutex>
+#include <thread>
+#include <atomic>
 #include <cpnet/cpnet-network.h>
 #include "semaphore.hpp"
 #include "message-base.hpp"
@@ -38,23 +40,28 @@ namespace marl {
 class LIBMARL_API client_base {
 public:
     client_base();
-    virtual ~client_base() = default;
+    virtual ~client_base();
     bool connect(const std::string& address, uint16_t port);
     void send_message(const message_base* const);
     response_base* get_response(uint32_t request_id);
+    void start();
+    void stop();
 protected:
-    virtual void process_request(const request_base* const) = 0;
+    virtual response_base* process_request(const request_base* const) = 0;
 private:
-    void receive_messages();
-    void request_broaker();
-    tidm::semaphore request_sem;
-    tidm::semaphore response_sem;
-    std::mutex request_lock;
-    std::mutex response_lock;
-    std::mutex transmit_lock;
+    void receiver_worker();
+    void responser_worker();
+    tidm::semaphore m_request_sem;
+    tidm::semaphore m_response_sem;
+    std::mutex m_request_lock;
+    std::mutex m_response_lock;
+    std::mutex m_transmit_lock;
+    std::thread m_responser;
+    std::thread m_receiver;
+    std::atomic_bool m_is_running;
+    socket_t m_socket;
     std::list<request_base*> m_requests;
     std::list<response_base*> m_responses;
-    socket_t m_socket;
 };
 
 }

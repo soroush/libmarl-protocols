@@ -21,7 +21,26 @@
 #ifndef LIBMARL_ENVIORNMENT_PARSER_HPP
 #define LIBMARL_ENVIORNMENT_PARSER_HPP
 
+#include "environment-pskel.hpp"
+#include "states-parser.hpp"
+#include "actions-parser.hpp"
+
 namespace marl {
+
+class environment_parser: public environment_pskel {
+public:
+	environment_parser();
+	void title(const std::string&) override;
+	void description(const std::string&) override;
+	void states(const std::vector<::marl::state*>&) override;
+	void actions(const std::vector<::marl::action*>&) override;
+	environment post_environment() override;
+private:
+	xml_schema::string_pimpl m_string_parser;
+	marl::states_parser m_states_parser;
+	marl::actions_parser m_actions_parser;
+	marl::environment m_env;
+};
 
 }
 

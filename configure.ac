@@ -47,13 +47,15 @@ AX_CXX_COMPILE_STDCXX_11([noext],[mandatory])
 
 # Checks for library functions.
 
+AX_PKG_CHECK_MODULES([CPNET],[],[libcpnet >= 1.0])
+AX_PKG_CHECK_MODULES([FLOG],[libflog >= 1.0],[])
 AX_PKG_CHECK_MODULES([XERCES],[],[xerces-c >= 3.1])
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile
                  test/Makefile
                  libmarl_protocols.pc])
-                 
+
 AC_SUBST([LIBMARL_SO_VERSION], [1:0:0])
 AC_SUBST([LIBMARL_API_VERSION], [1.0.0])
 

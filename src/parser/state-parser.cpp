@@ -20,14 +20,22 @@
 
 #include "state-parser.hpp"
 
-void marl::state_parser::id(unsigned long long i) {
-    this->m_id = static_cast<uint32_t>(i);
+marl::state_parser::state_parser():
+    state_pskel(),
+    m_id{0},
+    m_name{""} {
+    id_parser(m_id_parser);
+    title_parser(m_title_parser);
+}
+
+void marl::state_parser::id(uint32_t i) {
+    this->m_id = i;
 }
 
 void marl::state_parser::title(std::string n) {
     this->m_name = n;
 }
 
-marl::state *marl::state_parser::post_state_type() {
+marl::state* marl::state_parser::post_state() {
     return new marl::state(m_name, m_id);
 }

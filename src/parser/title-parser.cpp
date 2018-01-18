@@ -18,12 +18,13 @@
  * along with libmarl_protocols.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "from-parser.hpp"
+#include "title-parser.hpp"
 
-marl::state* marl::from_parser::post_from() {
-    return find(post_string());
+marl::title_parser::title_parser():
+    title_type_pskel(),
+    xml_schema::string_pimpl() {
 }
 
-std::string marl::from_parser::post_string() {
-	return std::string{};
+std::string marl::title_parser::post_title_type() {
+    return post_string();
 }

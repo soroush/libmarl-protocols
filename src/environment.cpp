@@ -20,3 +20,34 @@
 
 #include "environment.hpp"
 
+void marl::environment::set_title(const std::string& title) {
+	m_title = title;
+}
+
+void marl::environment::set_description(const std::string& description) {
+	m_description = description;
+}
+
+void marl::environment::set_states(const std::vector<marl::state*>& states) {
+	m_states = states;
+}
+
+void marl::environment::set_actions(const std::vector<marl::action*>& actions) {
+	m_actions = actions;
+}
+
+std::string marl::environment::title() const {
+	return m_title;
+}
+
+std::string marl::environment::description() const {
+	return m_description;
+}
+
+std::vector<marl::state*> marl::environment::states() const {
+	return m_states;
+}
+
+std::vector<marl::action*> marl::environment::actions() const {
+	return m_actions;
+}

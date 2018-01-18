@@ -18,18 +18,20 @@
  * along with libmarl_protocols.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBMARL_TO_PARSER_HPP
-#define LIBMARL_TO_PARSER_HPP
+#ifndef LIBMARL_TITLE_PARSER_HPP
+#define LIBMARL_TITLE_PARSER_HPP
 
-#include "to-pskel.hpp"
-#include "state-pointer-helper.hpp"
+#include "title_type-pskel.hpp"
+#include <cstdint>
 
 namespace marl {
-
-class to_parser : public to_pskel, public details::state_pointer_helper {
+class title_parser :
+    public title_type_pskel,
+    public xml_schema::string_pimpl {
 public:
-    marl::state* post_to() override;
+    title_parser();
+    std::string post_title_type() override;
 };
 }
 
-#endif // LIBMARL_TO_PARSER_HPP
+#endif // LIBMARL_TITLE_PARSER_HPP

@@ -20,6 +20,6 @@
 
 #include "probability-parser.hpp"
 
-float marl::probability_parser::post_probability() {
+float marl::probability_parser::post_probability_type() {
     return static_cast<float>(post_decimal());
 }

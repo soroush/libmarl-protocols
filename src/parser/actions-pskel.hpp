@@ -31,8 +31,8 @@
 // in the accompanying FLOSSE file.
 //
 
-#ifndef LIBMARL_ACTIONS_TYPE_PSKEL_HPP
-#define LIBMARL_ACTIONS_TYPE_PSKEL_HPP
+#ifndef LIBMARL_ACTIONS_PSKEL_HPP
+#define LIBMARL_ACTIONS_PSKEL_HPP
 
 #ifndef XSD_CXX11
 #define XSD_CXX11
@@ -53,7 +53,7 @@
 
 // Forward declarations
 //
-class actions_type_pskel;
+class actions_pskel;
 
 #ifndef XSD_USE_CHAR
 #define XSD_USE_CHAR
@@ -75,6 +75,7 @@ class actions_type_pskel;
 #include <xsd/cxx/parser/xerces/elements.hxx>
 
 #include <vector>
+#include <cstdint>
 #include "../transition.hpp"
 #include "../state.hpp"
 #include "../environment.hpp"
@@ -273,8 +274,8 @@ namespace xml_schema
   typedef ::xsd::cxx::parser::xerces::document< char > document;
 }
 
-class action_type_pskel;
-class actions_type_pskel: public ::xml_schema::complex_content
+class action_pskel;
+class actions_pskel: public ::xml_schema::complex_content
 {
   public:
   // Parser callbacks. Override them in your implementation.
@@ -286,19 +287,19 @@ class actions_type_pskel: public ::xml_schema::complex_content
   action (::marl::action*);
 
   virtual ::std::vector<::marl::action*>
-  post_actions_type () = 0;
+  post_actions () = 0;
 
   // Parser construction API.
   //
   void
-  action_parser (::action_type_pskel&);
+  action_parser (::action_pskel&);
 
   void
-  parsers (::action_type_pskel& /* action */);
+  parsers (::action_pskel& /* action */);
 
   // Constructor.
   //
-  actions_type_pskel ();
+  actions_pskel ();
 
   // Implementation.
   //
@@ -313,12 +314,12 @@ class actions_type_pskel: public ::xml_schema::complex_content
                      const ::xml_schema::ro_string&);
 
   protected:
-  ::action_type_pskel* action_parser_;
+  ::action_pskel* action_parser_;
 
   protected:
   struct v_state_descr_
   {
-    void (::actions_type_pskel::*func) (
+    void (::actions_pskel::*func) (
       unsigned long&,
       unsigned long&,
       const ::xml_schema::ro_string&,
@@ -360,4 +361,4 @@ class actions_type_pskel: public ::xml_schema::complex_content
 //
 // End epilogue.
 
-#endif // LIBMARL_ACTIONS_TYPE_PSKEL_HPP
+#endif // LIBMARL_ACTIONS_PSKEL_HPP

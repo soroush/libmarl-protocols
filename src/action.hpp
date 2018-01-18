@@ -34,13 +34,15 @@ class transition;
 class action : public named_object {
 public:
     action();
-    action(const std::string& name, uint32_t id);
+    action(const std::string& name, uint32_t id, marl::state* initial);
     ~action() = default;
+    marl::state* from() const;
     void add_transition(marl::transition*);
     void set_transitions(std::vector<marl::transition*>&&);
     std::vector<marl::transition*> transitions() const;
 private:
     std::vector<marl::transition*> m_transitions;
+    marl::state* m_initial_state;
 };
 }
 

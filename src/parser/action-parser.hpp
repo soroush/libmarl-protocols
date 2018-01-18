@@ -21,18 +21,29 @@
 #ifndef LIBMARL_ACTION_PARSER_HPP
 #define LIBMARL_ACTION_PARSER_HPP
 
-#include "action_type-pskel.hpp"
+#include "action-pskel.hpp"
+#include "transition-parser.hpp"
+#include "state-pointer-parser.hpp"
+#include "id-parser.hpp"
+#include "title-parser.hpp"
 #include <vector>
 
 namespace marl {
-class action_parser : public action_type_pskel {
+class action_parser : public action_pskel {
 public:
+	action_parser();
     void transition(marl::transition*) override;
-    void id(unsigned long long) override;
+    void id(uint32_t) override;
     void from(marl::state*) override;
     void title(std::string) override;
-    marl::action* post_action_type() override;
+    marl::action* post_action() override;
+    void set_states(const std::vector<marl::state*>& states);
+    void pre() override;
 private:
+    marl::state_pointer_parser m_fparser;
+    marl::transition_parser m_tparser;
+    marl::title_parser m_title_parser;
+    marl::id_parser m_id_parser;
     std::vector<marl::transition*> m_transitions;
     uint32_t i;
     marl::state* f;

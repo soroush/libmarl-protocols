@@ -38,7 +38,7 @@
 
 #include <xsd/cxx/pre.hxx>
 
-#include "probability-pskel.hpp"
+#include "probability_type-pskel.hpp"
 
 #include <cassert>
 

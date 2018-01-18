@@ -29,6 +29,7 @@ namespace marl {
 class from_parser : public from_pskel, public details::state_pointer_helper {
 public:
     marl::state* post_from() override;
+    std::string post_string() override;
 };
 }
 

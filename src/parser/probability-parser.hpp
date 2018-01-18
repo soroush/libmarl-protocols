@@ -21,12 +21,12 @@
 #ifndef LIBMARL_PROBABILITY_PARSER_HPP
 #define LIBMARL_PROBABILITY_PARSER_HPP
 
-#include "probability-pskel.hpp"
+#include "probability_type-pskel.hpp"
 
 namespace marl {
-class probability_parser : public probability_pskel {
+class probability_parser : public probability_type_pskel, public xml_schema::decimal_pimpl {
 public:
-    float post_probability() override;
+    float post_probability_type() override;
 };
 }
 

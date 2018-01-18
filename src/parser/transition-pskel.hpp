@@ -31,8 +31,8 @@
 // in the accompanying FLOSSE file.
 //
 
-#ifndef LIBMARL_STATE_TYPE_PSKEL_HPP
-#define LIBMARL_STATE_TYPE_PSKEL_HPP
+#ifndef LIBMARL_TRANSITION_PSKEL_HPP
+#define LIBMARL_TRANSITION_PSKEL_HPP
 
 #ifndef XSD_CXX11
 #define XSD_CXX11
@@ -53,7 +53,7 @@
 
 // Forward declarations
 //
-class state_type_pskel;
+class transition_pskel;
 
 #ifndef XSD_USE_CHAR
 #define XSD_USE_CHAR
@@ -75,6 +75,7 @@ class state_type_pskel;
 #include <xsd/cxx/parser/xerces/elements.hxx>
 
 #include <vector>
+#include <cstdint>
 #include "../transition.hpp"
 #include "../state.hpp"
 #include "../environment.hpp"
@@ -273,8 +274,9 @@ namespace xml_schema
   typedef ::xsd::cxx::parser::xerces::document< char > document;
 }
 
-class title_pskel;
-class state_type_pskel: public ::xml_schema::complex_content
+class state_pointer_type_pskel;
+class probability_type_pskel;
+class transition_pskel: public ::xml_schema::complex_content
 {
   public:
   // Parser callbacks. Override them in your implementation.
@@ -283,29 +285,36 @@ class state_type_pskel: public ::xml_schema::complex_content
   // pre ();
 
   virtual void
-  id (unsigned long long);
+  to (::marl::state*);
 
   virtual void
-  title (::std::string);
+  probability (float);
 
-  virtual ::marl::state*
-  post_state_type () = 0;
+  virtual void
+  reward (double);
+
+  virtual ::marl::transition*
+  post_transition () = 0;
 
   // Parser construction API.
   //
   void
-  id_parser (::xml_schema::non_negative_integer_pskel&);
+  to_parser (::state_pointer_type_pskel&);
 
   void
-  title_parser (::title_pskel&);
+  probability_parser (::probability_type_pskel&);
 
   void
-  parsers (::xml_schema::non_negative_integer_pskel& /* id */,
-           ::title_pskel& /* title */);
+  reward_parser (::xml_schema::decimal_pskel&);
+
+  void
+  parsers (::state_pointer_type_pskel& /* to */,
+           ::probability_type_pskel& /* probability */,
+           ::xml_schema::decimal_pskel& /* reward */);
 
   // Constructor.
   //
-  state_type_pskel ();
+  transition_pskel ();
 
   // Implementation.
   //
@@ -317,14 +326,16 @@ class state_type_pskel: public ::xml_schema::complex_content
 
 
   protected:
-  ::xml_schema::non_negative_integer_pskel* id_parser_;
-  ::title_pskel* title_parser_;
+  ::state_pointer_type_pskel* to_parser_;
+  ::probability_type_pskel* probability_parser_;
+  ::xml_schema::decimal_pskel* reward_parser_;
 
   protected:
   struct v_state_attr_
   {
-    bool id;
-    bool title;
+    bool to;
+    bool probability;
+    bool reward;
   };
 
   v_state_attr_ v_state_attr_first_;
@@ -344,4 +355,4 @@ class state_type_pskel: public ::xml_schema::complex_content
 //
 // End epilogue.
 
-#endif // LIBMARL_STATE_TYPE_PSKEL_HPP
+#endif // LIBMARL_TRANSITION_PSKEL_HPP

@@ -31,8 +31,8 @@
 // in the accompanying FLOSSE file.
 //
 
-#ifndef LIBMARL_STATES_TYPE_PSKEL_HPP
-#define LIBMARL_STATES_TYPE_PSKEL_HPP
+#ifndef LIBMARL_TITLE_TYPE_PSKEL_HPP
+#define LIBMARL_TITLE_TYPE_PSKEL_HPP
 
 #ifndef XSD_CXX11
 #define XSD_CXX11
@@ -53,7 +53,7 @@
 
 // Forward declarations
 //
-class states_type_pskel;
+class title_type_pskel;
 
 #ifndef XSD_USE_CHAR
 #define XSD_USE_CHAR
@@ -75,6 +75,7 @@ class states_type_pskel;
 #include <xsd/cxx/parser/xerces/elements.hxx>
 
 #include <vector>
+#include <cstdint>
 #include "../transition.hpp"
 #include "../state.hpp"
 #include "../environment.hpp"
@@ -273,8 +274,7 @@ namespace xml_schema
   typedef ::xsd::cxx::parser::xerces::document< char > document;
 }
 
-class state_type_pskel;
-class states_type_pskel: public ::xml_schema::complex_content
+class title_type_pskel: public virtual ::xml_schema::string_pskel
 {
   public:
   // Parser callbacks. Override them in your implementation.
@@ -282,75 +282,8 @@ class states_type_pskel: public ::xml_schema::complex_content
   // virtual void
   // pre ();
 
-  virtual void
-  state (::marl::state*);
-
-  virtual ::std::vector<::marl::state*>
-  post_states_type () = 0;
-
-  // Parser construction API.
-  //
-  void
-  state_parser (::state_type_pskel&);
-
-  void
-  parsers (::state_type_pskel& /* state */);
-
-  // Constructor.
-  //
-  states_type_pskel ();
-
-  // Implementation.
-  //
-  protected:
-  virtual bool
-  _start_element_impl (const ::xml_schema::ro_string&,
-                       const ::xml_schema::ro_string&,
-                       const ::xml_schema::ro_string*);
-
-  virtual bool
-  _end_element_impl (const ::xml_schema::ro_string&,
-                     const ::xml_schema::ro_string&);
-
-  protected:
-  ::state_type_pskel* state_parser_;
-
-  protected:
-  struct v_state_descr_
-  {
-    void (::states_type_pskel::*func) (
-      unsigned long&,
-      unsigned long&,
-      const ::xml_schema::ro_string&,
-      const ::xml_schema::ro_string&,
-      const ::xml_schema::ro_string*,
-      bool);
-    unsigned long state;
-    unsigned long count;
-  };
-
-  struct v_state_
-  {
-    v_state_descr_ data[2UL];
-    unsigned long size;
-  };
-
-  v_state_ v_state_first_;
-  ::xsd::cxx::parser::pod_stack v_state_stack_;
-
-  virtual void
-  _pre_e_validate ();
-
-  virtual void
-  _post_e_validate ();
-
-  void
-  sequence_0 (unsigned long& state,
-              unsigned long& count,
-              const ::xml_schema::ro_string& ns,
-              const ::xml_schema::ro_string& n,
-              const ::xml_schema::ro_string* t,
-              bool start);
+  virtual ::std::string
+  post_title_type ();
 };
 
 #include <xsd/cxx/post.hxx>
@@ -360,4 +293,4 @@ class states_type_pskel: public ::xml_schema::complex_content
 //
 // End epilogue.
 
-#endif // LIBMARL_STATES_TYPE_PSKEL_HPP
+#endif // LIBMARL_TITLE_TYPE_PSKEL_HPP

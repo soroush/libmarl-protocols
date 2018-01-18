@@ -20,6 +20,12 @@
 
 #include "transition-parser.hpp"
 
+marl::transition_parser::transition_parser() : transition_pskel(),
+p{0}, r{0}, s{nullptr} {
+    to_parser(m_tparser);
+	probability_parser(m_pparser);
+}
+
 void marl::transition_parser::probability(float _p) {
     p = _p;
 }
@@ -32,6 +38,10 @@ void marl::transition_parser::to(marl::state* _s) {
     s = _s;
 }
 
-marl::transition* marl::transition_parser::post_transition_type() {
+marl::transition* marl::transition_parser::post_transition() {
     return new transition(s, p, r);
+}
+
+void marl::transition_parser::set_states(const std::vector<marl::state*>& states) {
+	m_tparser.set_states(states);
 }

@@ -38,59 +38,61 @@
 
 #include <xsd/cxx/pre.hxx>
 
-#include "state_type-pskel.hpp"
+#include "state-pskel.hpp"
 
-#include "title-pskel.hpp"
+#include "id_type-pskel.hpp"
 
-// state_type_pskel
+#include "title_type-pskel.hpp"
+
+// state_pskel
 //
 
-void state_type_pskel::
-id_parser (::xml_schema::non_negative_integer_pskel& p)
+void state_pskel::
+id_parser (::id_type_pskel& p)
 {
   this->id_parser_ = &p;
 }
 
-void state_type_pskel::
-title_parser (::title_pskel& p)
+void state_pskel::
+title_parser (::title_type_pskel& p)
 {
   this->title_parser_ = &p;
 }
 
-void state_type_pskel::
-parsers (::xml_schema::non_negative_integer_pskel& id,
-         ::title_pskel& title)
+void state_pskel::
+parsers (::id_type_pskel& id,
+         ::title_type_pskel& title)
 {
   this->id_parser_ = &id;
   this->title_parser_ = &title;
 }
 
-state_type_pskel::
-state_type_pskel ()
+state_pskel::
+state_pskel ()
 : id_parser_ (0),
   title_parser_ (0),
   v_state_attr_stack_ (sizeof (v_state_attr_), &v_state_attr_first_)
 {
 }
 
-// state_type_pskel
+// state_pskel
 //
 
-void state_type_pskel::
-id (unsigned long long)
+void state_pskel::
+id (uint32_t)
 {
 }
 
-void state_type_pskel::
+void state_pskel::
 title (::std::string)
 {
 }
 
 #include <cassert>
 
-// Attribute validation and dispatch functions for state_type_pskel.
+// Attribute validation and dispatch functions for state_pskel.
 //
-bool state_type_pskel::
+bool state_pskel::
 _attribute_impl_phase_one (const ::xml_schema::ro_string& ns,
                            const ::xml_schema::ro_string& n,
                            const ::xml_schema::ro_string& s)
@@ -103,7 +105,7 @@ _attribute_impl_phase_one (const ::xml_schema::ro_string& ns,
       this->id_parser_->_pre_impl ();
       this->id_parser_->_characters (s);
       this->id_parser_->_post_impl ();
-      this->id (this->id_parser_->post_non_negative_integer ());
+      this->id (this->id_parser_->post_id_type ());
     }
 
     static_cast< v_state_attr_* > (this->v_state_attr_stack_.top ())->id = true;
@@ -118,7 +120,7 @@ _attribute_impl_phase_one (const ::xml_schema::ro_string& ns,
       this->title_parser_->_pre_impl ();
       this->title_parser_->_characters (s);
       this->title_parser_->_post_impl ();
-      this->title (this->title_parser_->post_title ());
+      this->title (this->title_parser_->post_title_type ());
     }
 
     static_cast< v_state_attr_* > (this->v_state_attr_stack_.top ())->title = true;
@@ -128,7 +130,7 @@ _attribute_impl_phase_one (const ::xml_schema::ro_string& ns,
   return false;
 }
 
-void state_type_pskel::
+void state_pskel::
 _pre_a_validate ()
 {
   this->v_state_attr_stack_.push ();
@@ -138,7 +140,7 @@ _pre_a_validate ()
   as.title = false;
 }
 
-void state_type_pskel::
+void state_pskel::
 _post_a_validate ()
 {
   v_state_attr_& as = *static_cast< v_state_attr_* > (this->v_state_attr_stack_.top ());

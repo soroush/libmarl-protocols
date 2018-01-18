@@ -31,8 +31,8 @@
 // in the accompanying FLOSSE file.
 //
 
-#ifndef LIBMARL_FROM_PSKEL_HPP
-#define LIBMARL_FROM_PSKEL_HPP
+#ifndef LIBMARL_STATE_PSKEL_HPP
+#define LIBMARL_STATE_PSKEL_HPP
 
 #ifndef XSD_CXX11
 #define XSD_CXX11
@@ -53,7 +53,7 @@
 
 // Forward declarations
 //
-class from_pskel;
+class state_pskel;
 
 #ifndef XSD_USE_CHAR
 #define XSD_USE_CHAR
@@ -75,6 +75,7 @@ class from_pskel;
 #include <xsd/cxx/parser/xerces/elements.hxx>
 
 #include <vector>
+#include <cstdint>
 #include "../transition.hpp"
 #include "../state.hpp"
 #include "../environment.hpp"
@@ -273,7 +274,9 @@ namespace xml_schema
   typedef ::xsd::cxx::parser::xerces::document< char > document;
 }
 
-class from_pskel: public virtual ::xml_schema::string_pskel
+class id_type_pskel;
+class title_type_pskel;
+class state_pskel: public ::xml_schema::complex_content
 {
   public:
   // Parser callbacks. Override them in your implementation.
@@ -281,8 +284,59 @@ class from_pskel: public virtual ::xml_schema::string_pskel
   // virtual void
   // pre ();
 
+  virtual void
+  id (uint32_t);
+
+  virtual void
+  title (::std::string);
+
   virtual ::marl::state*
-  post_from () = 0;
+  post_state () = 0;
+
+  // Parser construction API.
+  //
+  void
+  id_parser (::id_type_pskel&);
+
+  void
+  title_parser (::title_type_pskel&);
+
+  void
+  parsers (::id_type_pskel& /* id */,
+           ::title_type_pskel& /* title */);
+
+  // Constructor.
+  //
+  state_pskel ();
+
+  // Implementation.
+  //
+  protected:
+  virtual bool
+  _attribute_impl_phase_one (const ::xml_schema::ro_string&,
+                             const ::xml_schema::ro_string&,
+                             const ::xml_schema::ro_string&);
+
+
+  protected:
+  ::id_type_pskel* id_parser_;
+  ::title_type_pskel* title_parser_;
+
+  protected:
+  struct v_state_attr_
+  {
+    bool id;
+    bool title;
+  };
+
+  v_state_attr_ v_state_attr_first_;
+  ::xsd::cxx::parser::pod_stack v_state_attr_stack_;
+
+  virtual void
+  _pre_a_validate ();
+
+  virtual void
+  _post_a_validate ();
 };
 
 #include <xsd/cxx/post.hxx>
@@ -292,4 +346,4 @@ class from_pskel: public virtual ::xml_schema::string_pskel
 //
 // End epilogue.
 
-#endif // LIBMARL_FROM_PSKEL_HPP
+#endif // LIBMARL_STATE_PSKEL_HPP

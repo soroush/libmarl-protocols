@@ -31,8 +31,8 @@
 // in the accompanying FLOSSE file.
 //
 
-#ifndef LIBMARL_ENVIRONMENT_TYPE_PSKEL_HPP
-#define LIBMARL_ENVIRONMENT_TYPE_PSKEL_HPP
+#ifndef LIBMARL_STATES_PSKEL_HPP
+#define LIBMARL_STATES_PSKEL_HPP
 
 #ifndef XSD_CXX11
 #define XSD_CXX11
@@ -53,7 +53,7 @@
 
 // Forward declarations
 //
-class environment_type_pskel;
+class states_pskel;
 
 #ifndef XSD_USE_CHAR
 #define XSD_USE_CHAR
@@ -75,6 +75,7 @@ class environment_type_pskel;
 #include <xsd/cxx/parser/xerces/elements.hxx>
 
 #include <vector>
+#include <cstdint>
 #include "../transition.hpp"
 #include "../state.hpp"
 #include "../environment.hpp"
@@ -273,9 +274,8 @@ namespace xml_schema
   typedef ::xsd::cxx::parser::xerces::document< char > document;
 }
 
-class states_type_pskel;
-class actions_type_pskel;
-class environment_type_pskel: public ::xml_schema::complex_content
+class state_pskel;
+class states_pskel: public ::xml_schema::complex_content
 {
   public:
   // Parser callbacks. Override them in your implementation.
@@ -284,43 +284,22 @@ class environment_type_pskel: public ::xml_schema::complex_content
   // pre ();
 
   virtual void
-  title (const ::std::string&);
+  state (::marl::state*);
 
-  virtual void
-  description (const ::std::string&);
-
-  virtual void
-  states (const ::std::vector<::marl::state*>&);
-
-  virtual void
-  actions (::std::vector<::marl::action*>);
-
-  virtual ::marl::environment
-  post_environment_type () = 0;
+  virtual ::std::vector<::marl::state*>
+  post_states () = 0;
 
   // Parser construction API.
   //
   void
-  title_parser (::xml_schema::string_pskel&);
+  state_parser (::state_pskel&);
 
   void
-  description_parser (::xml_schema::string_pskel&);
-
-  void
-  states_parser (::states_type_pskel&);
-
-  void
-  actions_parser (::actions_type_pskel&);
-
-  void
-  parsers (::xml_schema::string_pskel& /* title */,
-           ::xml_schema::string_pskel& /* description */,
-           ::states_type_pskel& /* states */,
-           ::actions_type_pskel& /* actions */);
+  parsers (::state_pskel& /* state */);
 
   // Constructor.
   //
-  environment_type_pskel ();
+  states_pskel ();
 
   // Implementation.
   //
@@ -335,15 +314,12 @@ class environment_type_pskel: public ::xml_schema::complex_content
                      const ::xml_schema::ro_string&);
 
   protected:
-  ::xml_schema::string_pskel* title_parser_;
-  ::xml_schema::string_pskel* description_parser_;
-  ::states_type_pskel* states_parser_;
-  ::actions_type_pskel* actions_parser_;
+  ::state_pskel* state_parser_;
 
   protected:
   struct v_state_descr_
   {
-    void (::environment_type_pskel::*func) (
+    void (::states_pskel::*func) (
       unsigned long&,
       unsigned long&,
       const ::xml_schema::ro_string&,
@@ -385,4 +361,4 @@ class environment_type_pskel: public ::xml_schema::complex_content
 //
 // End epilogue.
 
-#endif // LIBMARL_ENVIRONMENT_TYPE_PSKEL_HPP
+#endif // LIBMARL_STATES_PSKEL_HPP

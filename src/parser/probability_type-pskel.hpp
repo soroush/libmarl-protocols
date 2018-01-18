@@ -31,8 +31,8 @@
 // in the accompanying FLOSSE file.
 //
 
-#ifndef LIBMARL_TITLE_PSKEL_HPP
-#define LIBMARL_TITLE_PSKEL_HPP
+#ifndef LIBMARL_PROBABILITY_TYPE_PSKEL_HPP
+#define LIBMARL_PROBABILITY_TYPE_PSKEL_HPP
 
 #ifndef XSD_CXX11
 #define XSD_CXX11
@@ -53,7 +53,7 @@
 
 // Forward declarations
 //
-class title_pskel;
+class probability_type_pskel;
 
 #ifndef XSD_USE_CHAR
 #define XSD_USE_CHAR
@@ -75,6 +75,7 @@ class title_pskel;
 #include <xsd/cxx/parser/xerces/elements.hxx>
 
 #include <vector>
+#include <cstdint>
 #include "../transition.hpp"
 #include "../state.hpp"
 #include "../environment.hpp"
@@ -273,7 +274,7 @@ namespace xml_schema
   typedef ::xsd::cxx::parser::xerces::document< char > document;
 }
 
-class title_pskel: public virtual ::xml_schema::string_pskel
+class probability_type_pskel: public virtual ::xml_schema::decimal_pskel
 {
   public:
   // Parser callbacks. Override them in your implementation.
@@ -281,8 +282,8 @@ class title_pskel: public virtual ::xml_schema::string_pskel
   // virtual void
   // pre ();
 
-  virtual ::std::string
-  post_title ();
+  virtual float
+  post_probability_type () = 0;
 };
 
 #include <xsd/cxx/post.hxx>
@@ -292,4 +293,4 @@ class title_pskel: public virtual ::xml_schema::string_pskel
 //
 // End epilogue.
 
-#endif // LIBMARL_TITLE_PSKEL_HPP
+#endif // LIBMARL_PROBABILITY_TYPE_PSKEL_HPP

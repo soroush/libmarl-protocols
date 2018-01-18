@@ -105,7 +105,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-check_PROGRAMS = tst_serialize$(EXEEXT)
+check_PROGRAMS = tst_serialize$(EXEEXT) tst_parser$(EXEEXT)
 subdir = test
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_cxx_compile_stdcxx.m4 \
@@ -121,14 +121,21 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am_tst_serialize_OBJECTS = tst-serialize.$(OBJEXT)
-tst_serialize_OBJECTS = $(am_tst_serialize_OBJECTS)
-tst_serialize_LDADD = $(LDADD)
-tst_serialize_DEPENDENCIES = ../src/libmarl_protocols.la
+am_tst_parser_OBJECTS = tst-parser.$(OBJEXT)
+tst_parser_OBJECTS = $(am_tst_parser_OBJECTS)
+tst_parser_LDADD = $(LDADD)
+am__DEPENDENCIES_1 =
+tst_parser_DEPENDENCIES = ../src/libmarl_protocols.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+am_tst_serialize_OBJECTS = tst-serialize.$(OBJEXT)
+tst_serialize_OBJECTS = $(am_tst_serialize_OBJECTS)
+tst_serialize_LDADD = $(LDADD)
+tst_serialize_DEPENDENCIES = ../src/libmarl_protocols.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -163,8 +170,8 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(tst_serialize_SOURCES)
-DIST_SOURCES = $(tst_serialize_SOURCES)
+SOURCES = $(tst_parser_SOURCES) $(tst_serialize_SOURCES)
+DIST_SOURCES = $(tst_parser_SOURCES) $(tst_serialize_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -409,6 +416,8 @@ AX_PACKAGE_REQUIRES_PRIVATE = @AX_PACKAGE_REQUIRES_PRIVATE@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
+CPNET_CFLAGS = @CPNET_CFLAGS@
+CPNET_LIBS = @CPNET_LIBS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
@@ -427,6 +436,8 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FLOG_CFLAGS = @FLOG_CFLAGS@
+FLOG_LIBS = @FLOG_LIBS@
 GREP = @GREP@
 HAVE_CXX11 = @HAVE_CXX11@
 INSTALL = @INSTALL@
@@ -529,13 +540,22 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS} -I m4
 AUTOMAKE_OPTIONS = subdir-objects
-AM_CPPFLAGS = -I$(srcdir)/..
+AM_CPPFLAGS = \
+	-I$(srcdir)/.. \
+    $(CPNET_CFLAGS) \
+    $(XERCES_CFLAGS)
+
 AM_CXXFLAGS = --pedantic -Wall -Werror
 tst_serialize_SOURCES = \
     tst-serialize.cpp
 
+tst_parser_SOURCES = \
+    tst-parser.cpp
+
 LDADD = \
-    ../src/libmarl_protocols.la
+    ../src/libmarl_protocols.la \
+    $(CPNET_LIBS) \
+    $(XERCES_LIBS)
 
 TESTS = $(check_PROGRAMS)
 all: all-am
@@ -581,6 +601,10 @@ clean-checkPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
+tst_parser$(EXEEXT): $(tst_parser_OBJECTS) $(tst_parser_DEPENDENCIES) $(EXTRA_tst_parser_DEPENDENCIES) 
+	@rm -f tst_parser$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(tst_parser_OBJECTS) $(tst_parser_LDADD) $(LIBS)
+
 tst_serialize$(EXEEXT): $(tst_serialize_OBJECTS) $(tst_serialize_DEPENDENCIES) $(EXTRA_tst_serialize_DEPENDENCIES) 
 	@rm -f tst_serialize$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(tst_serialize_OBJECTS) $(tst_serialize_LDADD) $(LIBS)
@@ -591,6 +615,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tst-parser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tst-serialize.Po@am__quote@
 
 .cpp.o:
@@ -819,6 +844,13 @@ recheck: all $(check_PROGRAMS)
 tst_serialize.log: tst_serialize$(EXEEXT)
 	@p='tst_serialize$(EXEEXT)'; \
 	b='tst_serialize'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tst_parser.log: tst_parser$(EXEEXT)
+	@p='tst_parser$(EXEEXT)'; \
+	b='tst_parser'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

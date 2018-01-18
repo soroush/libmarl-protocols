@@ -18,12 +18,8 @@
  * along with libmarl_protocols.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "from-parser.hpp"
+#include "id-parser.hpp"
 
-marl::state* marl::from_parser::post_from() {
-    return find(post_string());
-}
-
-std::string marl::from_parser::post_string() {
-	return std::string{};
+uint32_t marl::id_parser::post_id_type() {
+    return static_cast<uint32_t>(post_non_negative_integer());
 }

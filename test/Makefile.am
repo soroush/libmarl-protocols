@@ -18,16 +18,26 @@
 
 ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS} -I m4
 AUTOMAKE_OPTIONS = subdir-objects
-AM_CPPFLAGS = -I$(srcdir)/..
+AM_CPPFLAGS = \
+	-I$(srcdir)/.. \
+    $(CPNET_CFLAGS) \
+    $(XERCES_CFLAGS)
+
 AM_CXXFLAGS = --pedantic -Wall -Werror
 
 check_PROGRAMS = \
-    tst_serialize
+    tst_serialize \
+    tst_parser
 
 tst_serialize_SOURCES = \
     tst-serialize.cpp
 
+tst_parser_SOURCES = \
+    tst-parser.cpp
+
 LDADD = \
-    ../src/libmarl_protocols.la
+    ../src/libmarl_protocols.la \
+    $(CPNET_LIBS) \
+    $(XERCES_LIBS)
 
 TESTS = $(check_PROGRAMS)

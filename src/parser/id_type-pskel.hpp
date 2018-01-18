@@ -31,8 +31,8 @@
 // in the accompanying FLOSSE file.
 //
 
-#ifndef LIBMARL_ACTION_TYPE_PSKEL_HPP
-#define LIBMARL_ACTION_TYPE_PSKEL_HPP
+#ifndef LIBMARL_ID_TYPE_PSKEL_HPP
+#define LIBMARL_ID_TYPE_PSKEL_HPP
 
 #ifndef XSD_CXX11
 #define XSD_CXX11
@@ -53,7 +53,7 @@
 
 // Forward declarations
 //
-class action_type_pskel;
+class id_type_pskel;
 
 #ifndef XSD_USE_CHAR
 #define XSD_USE_CHAR
@@ -75,6 +75,7 @@ class action_type_pskel;
 #include <xsd/cxx/parser/xerces/elements.hxx>
 
 #include <vector>
+#include <cstdint>
 #include "../transition.hpp"
 #include "../state.hpp"
 #include "../environment.hpp"
@@ -273,10 +274,7 @@ namespace xml_schema
   typedef ::xsd::cxx::parser::xerces::document< char > document;
 }
 
-class transition_type_pskel;
-class from_pskel;
-class title_pskel;
-class action_type_pskel: public ::xml_schema::complex_content
+class id_type_pskel: public virtual ::xml_schema::non_negative_integer_pskel
 {
   public:
   // Parser callbacks. Override them in your implementation.
@@ -284,122 +282,8 @@ class action_type_pskel: public ::xml_schema::complex_content
   // virtual void
   // pre ();
 
-  virtual void
-  transition (marl::transition*);
-
-  virtual void
-  id (unsigned long long);
-
-  virtual void
-  from (::marl::state*);
-
-  virtual void
-  title (::std::string);
-
-  virtual ::marl::action*
-  post_action_type () = 0;
-
-  // Parser construction API.
-  //
-  void
-  transition_parser (::transition_type_pskel&);
-
-  void
-  id_parser (::xml_schema::non_negative_integer_pskel&);
-
-  void
-  from_parser (::from_pskel&);
-
-  void
-  title_parser (::title_pskel&);
-
-  void
-  parsers (::transition_type_pskel& /* transition */,
-           ::xml_schema::non_negative_integer_pskel& /* id */,
-           ::from_pskel& /* from */,
-           ::title_pskel& /* title */);
-
-  // Constructor.
-  //
-  action_type_pskel ();
-
-  // Implementation.
-  //
-  protected:
-  virtual bool
-  _start_element_impl (const ::xml_schema::ro_string&,
-                       const ::xml_schema::ro_string&,
-                       const ::xml_schema::ro_string*);
-
-  virtual bool
-  _end_element_impl (const ::xml_schema::ro_string&,
-                     const ::xml_schema::ro_string&);
-
-  virtual bool
-  _attribute_impl_phase_one (const ::xml_schema::ro_string&,
-                             const ::xml_schema::ro_string&,
-                             const ::xml_schema::ro_string&);
-
-
-  protected:
-  ::transition_type_pskel* transition_parser_;
-  ::xml_schema::non_negative_integer_pskel* id_parser_;
-  ::from_pskel* from_parser_;
-  ::title_pskel* title_parser_;
-
-  protected:
-  struct v_state_descr_
-  {
-    void (::action_type_pskel::*func) (
-      unsigned long&,
-      unsigned long&,
-      const ::xml_schema::ro_string&,
-      const ::xml_schema::ro_string&,
-      const ::xml_schema::ro_string*,
-      bool);
-    unsigned long state;
-    unsigned long count;
-  };
-
-  struct v_state_
-  {
-    v_state_descr_ data[2UL];
-    unsigned long size;
-  };
-
-  v_state_ v_state_first_;
-  ::xsd::cxx::parser::pod_stack v_state_stack_;
-
-  virtual void
-  _pre_e_validate ();
-
-  virtual void
-  _post_e_validate ();
-
-  void
-  sequence_0 (unsigned long& state,
-              unsigned long& count,
-              const ::xml_schema::ro_string& ns,
-              const ::xml_schema::ro_string& n,
-              const ::xml_schema::ro_string* t,
-              bool start);
-
-  protected:
-  struct v_state_attr_
-  {
-    bool id;
-    bool from;
-    bool title;
-  };
-
-  v_state_attr_ v_state_attr_first_;
-  ::xsd::cxx::parser::pod_stack v_state_attr_stack_;
-
-  virtual void
-  _pre_a_validate ();
-
-  virtual void
-  _post_a_validate ();
+  virtual uint32_t
+  post_id_type () = 0;
 };
 
 #include <xsd/cxx/post.hxx>
@@ -409,4 +293,4 @@ class action_type_pskel: public ::xml_schema::complex_content
 //
 // End epilogue.
 
-#endif // LIBMARL_ACTION_TYPE_PSKEL_HPP
+#endif // LIBMARL_ID_TYPE_PSKEL_HPP

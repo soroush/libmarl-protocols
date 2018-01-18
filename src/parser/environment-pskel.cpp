@@ -40,7 +40,371 @@
 
 #include "environment-pskel.hpp"
 
+#include "states-pskel.hpp"
+
+#include "actions-pskel.hpp"
+
+// environment_pskel
+//
+
+void environment_pskel::
+title_parser (::xml_schema::string_pskel& p)
+{
+  this->title_parser_ = &p;
+}
+
+void environment_pskel::
+description_parser (::xml_schema::string_pskel& p)
+{
+  this->description_parser_ = &p;
+}
+
+void environment_pskel::
+states_parser (::states_pskel& p)
+{
+  this->states_parser_ = &p;
+}
+
+void environment_pskel::
+actions_parser (::actions_pskel& p)
+{
+  this->actions_parser_ = &p;
+}
+
+void environment_pskel::
+parsers (::xml_schema::string_pskel& title,
+         ::xml_schema::string_pskel& description,
+         ::states_pskel& states,
+         ::actions_pskel& actions)
+{
+  this->title_parser_ = &title;
+  this->description_parser_ = &description;
+  this->states_parser_ = &states;
+  this->actions_parser_ = &actions;
+}
+
+environment_pskel::
+environment_pskel ()
+: title_parser_ (0),
+  description_parser_ (0),
+  states_parser_ (0),
+  actions_parser_ (0),
+  v_state_stack_ (sizeof (v_state_), &v_state_first_)
+{
+}
+
+// environment_pskel
+//
+
+void environment_pskel::
+title (const ::std::string&)
+{
+}
+
+void environment_pskel::
+description (const ::std::string&)
+{
+}
+
+void environment_pskel::
+states (const ::std::vector<::marl::state*>&)
+{
+}
+
+void environment_pskel::
+actions (const ::std::vector<::marl::action*>&)
+{
+}
+
 #include <cassert>
+
+// Element validation and dispatch functions for environment_pskel.
+//
+bool environment_pskel::
+_start_element_impl (const ::xml_schema::ro_string& ns,
+                     const ::xml_schema::ro_string& n,
+                     const ::xml_schema::ro_string* t)
+{
+  XSD_UNUSED (t);
+
+  v_state_& vs = *static_cast< v_state_* > (this->v_state_stack_.top ());
+  v_state_descr_* vd = vs.data + (vs.size - 1);
+
+  if (vd->func == 0 && vd->state == 0)
+  {
+    if (this->::xml_schema::complex_content::_start_element_impl (ns, n, t))
+      return true;
+    else
+      vd->state = 1;
+  }
+
+  while (vd->func != 0)
+  {
+    (this->*vd->func) (vd->state, vd->count, ns, n, t, true);
+
+    vd = vs.data + (vs.size - 1);
+
+    if (vd->state == ~0UL)
+      vd = vs.data + (--vs.size - 1);
+    else
+      break;
+  }
+
+  if (vd->func == 0)
+  {
+    if (vd->state != ~0UL)
+    {
+      unsigned long s = ~0UL;
+
+      if (n == "title" && ns.empty ())
+        s = 0UL;
+
+      if (s != ~0UL)
+      {
+        vd->count++;
+        vd->state = ~0UL;
+
+        vd = vs.data + vs.size++;
+        vd->func = &environment_pskel::sequence_0;
+        vd->state = s;
+        vd->count = 0;
+
+        this->sequence_0 (vd->state, vd->count, ns, n, t, true);
+      }
+      else
+      {
+        if (vd->count < 1UL)
+          this->_expected_element (
+            "", "title",
+            ns, n);
+        return false;
+      }
+    }
+    else
+      return false;
+  }
+
+  return true;
+}
+
+bool environment_pskel::
+_end_element_impl (const ::xml_schema::ro_string& ns,
+                   const ::xml_schema::ro_string& n)
+{
+  v_state_& vs = *static_cast< v_state_* > (this->v_state_stack_.top ());
+  v_state_descr_& vd = vs.data[vs.size - 1];
+
+  if (vd.func == 0 && vd.state == 0)
+  {
+    if (!::xml_schema::complex_content::_end_element_impl (ns, n))
+      assert (false);
+    return true;
+  }
+
+  assert (vd.func != 0);
+  (this->*vd.func) (vd.state, vd.count, ns, n, 0, false);
+
+  if (vd.state == ~0UL)
+    vs.size--;
+
+  return true;
+}
+
+void environment_pskel::
+_pre_e_validate ()
+{
+  this->v_state_stack_.push ();
+  static_cast< v_state_* > (this->v_state_stack_.top ())->size = 0;
+
+  v_state_& vs = *static_cast< v_state_* > (this->v_state_stack_.top ());
+  v_state_descr_& vd = vs.data[vs.size++];
+
+  vd.func = 0;
+  vd.state = 0;
+  vd.count = 0;
+}
+
+void environment_pskel::
+_post_e_validate ()
+{
+  v_state_& vs = *static_cast< v_state_* > (this->v_state_stack_.top ());
+  v_state_descr_* vd = vs.data + (vs.size - 1);
+
+  ::xml_schema::ro_string empty;
+  while (vd->func != 0)
+  {
+    (this->*vd->func) (vd->state, vd->count, empty, empty, 0, true);
+    assert (vd->state == ~0UL);
+    vd = vs.data + (--vs.size - 1);
+  }
+
+  if (vd->count < 1UL)
+    this->_expected_element (
+      "", "title");
+
+  this->v_state_stack_.pop ();
+}
+
+void environment_pskel::
+sequence_0 (unsigned long& state,
+            unsigned long& count,
+            const ::xml_schema::ro_string& ns,
+            const ::xml_schema::ro_string& n,
+            const ::xml_schema::ro_string* t,
+            bool start)
+{
+  XSD_UNUSED (t);
+
+  switch (state)
+  {
+    case 0UL:
+    {
+      if (n == "title" && ns.empty ())
+      {
+        if (start)
+        {
+          this->::xml_schema::complex_content::context_.top ().parser_ = this->title_parser_;
+
+          if (this->title_parser_)
+            this->title_parser_->pre ();
+        }
+        else
+        {
+          if (this->title_parser_)
+          {
+            this->title (this->title_parser_->post_string ());
+          }
+
+          count = 0;
+          state = 1UL;
+        }
+
+        break;
+      }
+      else
+      {
+        assert (start);
+        if (count < 1UL)
+          this->_expected_element (
+            "", "title",
+            ns, n);
+        count = 0;
+        state = 1UL;
+        // Fall through.
+      }
+    }
+    case 1UL:
+    {
+      if (n == "description" && ns.empty ())
+      {
+        if (start)
+        {
+          this->::xml_schema::complex_content::context_.top ().parser_ = this->description_parser_;
+
+          if (this->description_parser_)
+            this->description_parser_->pre ();
+        }
+        else
+        {
+          if (this->description_parser_)
+          {
+            this->description (this->description_parser_->post_string ());
+          }
+
+          count = 0;
+          state = 2UL;
+        }
+
+        break;
+      }
+      else
+      {
+        assert (start);
+        if (count < 1UL)
+          this->_expected_element (
+            "", "description",
+            ns, n);
+        count = 0;
+        state = 2UL;
+        // Fall through.
+      }
+    }
+    case 2UL:
+    {
+      if (n == "states" && ns.empty ())
+      {
+        if (start)
+        {
+          this->::xml_schema::complex_content::context_.top ().parser_ = this->states_parser_;
+
+          if (this->states_parser_)
+            this->states_parser_->pre ();
+        }
+        else
+        {
+          if (this->states_parser_)
+          {
+            this->states (this->states_parser_->post_states ());
+          }
+
+          count = 0;
+          state = 3UL;
+        }
+
+        break;
+      }
+      else
+      {
+        assert (start);
+        if (count < 1UL)
+          this->_expected_element (
+            "", "states",
+            ns, n);
+        count = 0;
+        state = 3UL;
+        // Fall through.
+      }
+    }
+    case 3UL:
+    {
+      if (n == "actions" && ns.empty ())
+      {
+        if (start)
+        {
+          this->::xml_schema::complex_content::context_.top ().parser_ = this->actions_parser_;
+
+          if (this->actions_parser_)
+            this->actions_parser_->pre ();
+        }
+        else
+        {
+          if (this->actions_parser_)
+          {
+            this->actions (this->actions_parser_->post_actions ());
+          }
+
+          count = 0;
+          state = ~0UL;
+        }
+
+        break;
+      }
+      else
+      {
+        assert (start);
+        if (count < 1UL)
+          this->_expected_element (
+            "", "actions",
+            ns, n);
+        count = 0;
+        state = ~0UL;
+        // Fall through.
+      }
+    }
+    case ~0UL:
+      break;
+  }
+}
 
 #include <xsd/cxx/post.hxx>
 

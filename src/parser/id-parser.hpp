@@ -18,12 +18,18 @@
  * along with libmarl_protocols.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "from-parser.hpp"
+#ifndef LIBMARL_ID_PARSER_HPP
+#define LIBMARL_ID_PARSER_HPP
 
-marl::state* marl::from_parser::post_from() {
-    return find(post_string());
+#include "id_type-pskel.hpp"
+
+namespace marl {
+class id_parser :
+    public id_type_pskel,
+    public xml_schema::non_negative_integer_pimpl {
+public:
+    virtual uint32_t post_id_type() override;
+};
 }
 
-std::string marl::from_parser::post_string() {
-	return std::string{};
-}
+#endif // LIBMARL_ID_PARSER_HPP

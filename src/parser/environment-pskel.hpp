@@ -53,6 +53,7 @@
 
 // Forward declarations
 //
+class environment_pskel;
 
 #ifndef XSD_USE_CHAR
 #define XSD_USE_CHAR
@@ -72,6 +73,13 @@
 #include <xsd/cxx/parser/validating/xml-schema-pskel.hxx>
 #include <xsd/cxx/parser/validating/xml-schema-pimpl.hxx>
 #include <xsd/cxx/parser/xerces/elements.hxx>
+
+#include <vector>
+#include <cstdint>
+#include "../transition.hpp"
+#include "../state.hpp"
+#include "../environment.hpp"
+#include "../action.hpp"
 
 namespace xml_schema
 {
@@ -266,25 +274,110 @@ namespace xml_schema
   typedef ::xsd::cxx::parser::xerces::document< char > document;
 }
 
-#include "environment_type-pskel.hpp"
+class states_pskel;
+class actions_pskel;
+class environment_pskel: public ::xml_schema::complex_content
+{
+  public:
+  // Parser callbacks. Override them in your implementation.
+  //
+  // virtual void
+  // pre ();
 
-#include "states_type-pskel.hpp"
+  virtual void
+  title (const ::std::string&);
 
-#include "actions_type-pskel.hpp"
+  virtual void
+  description (const ::std::string&);
 
-#include "state_type-pskel.hpp"
+  virtual void
+  states (const ::std::vector<::marl::state*>&);
 
-#include "action_type-pskel.hpp"
+  virtual void
+  actions (const ::std::vector<::marl::action*>&);
 
-#include "transition_type-pskel.hpp"
+  virtual ::marl::environment
+  post_environment () = 0;
 
-#include "title-pskel.hpp"
+  // Parser construction API.
+  //
+  void
+  title_parser (::xml_schema::string_pskel&);
 
-#include "from-pskel.hpp"
+  void
+  description_parser (::xml_schema::string_pskel&);
 
-#include "probability-pskel.hpp"
+  void
+  states_parser (::states_pskel&);
 
-#include "to-pskel.hpp"
+  void
+  actions_parser (::actions_pskel&);
+
+  void
+  parsers (::xml_schema::string_pskel& /* title */,
+           ::xml_schema::string_pskel& /* description */,
+           ::states_pskel& /* states */,
+           ::actions_pskel& /* actions */);
+
+  // Constructor.
+  //
+  environment_pskel ();
+
+  // Implementation.
+  //
+  protected:
+  virtual bool
+  _start_element_impl (const ::xml_schema::ro_string&,
+                       const ::xml_schema::ro_string&,
+                       const ::xml_schema::ro_string*);
+
+  virtual bool
+  _end_element_impl (const ::xml_schema::ro_string&,
+                     const ::xml_schema::ro_string&);
+
+  protected:
+  ::xml_schema::string_pskel* title_parser_;
+  ::xml_schema::string_pskel* description_parser_;
+  ::states_pskel* states_parser_;
+  ::actions_pskel* actions_parser_;
+
+  protected:
+  struct v_state_descr_
+  {
+    void (::environment_pskel::*func) (
+      unsigned long&,
+      unsigned long&,
+      const ::xml_schema::ro_string&,
+      const ::xml_schema::ro_string&,
+      const ::xml_schema::ro_string*,
+      bool);
+    unsigned long state;
+    unsigned long count;
+  };
+
+  struct v_state_
+  {
+    v_state_descr_ data[2UL];
+    unsigned long size;
+  };
+
+  v_state_ v_state_first_;
+  ::xsd::cxx::parser::pod_stack v_state_stack_;
+
+  virtual void
+  _pre_e_validate ();
+
+  virtual void
+  _post_e_validate ();
+
+  void
+  sequence_0 (unsigned long& state,
+              unsigned long& count,
+              const ::xml_schema::ro_string& ns,
+              const ::xml_schema::ro_string& n,
+              const ::xml_schema::ro_string* t,
+              bool start);
+};
 
 #include <xsd/cxx/post.hxx>
 

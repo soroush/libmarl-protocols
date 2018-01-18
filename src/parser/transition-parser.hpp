@@ -18,23 +18,33 @@
  * along with libmarl_protocols.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "transition_type-pskel.hpp"
 
 #ifndef LIBMARL_TRANSITION_PARSER_HPP
 #define LIBMARL_TRANSITION_PARSER_HPP
 
+#include "transition-pskel.hpp"
+#include "state-pointer-parser.hpp"
+#include "probability-parser.hpp"
+
 namespace marl {
 
-class transition_parser : public transition_type_pskel {
+class state;
+
+class transition_parser : public transition_pskel {
 public:
+	transition_parser();
     void probability(float) override;
     void reward(double) override;
     void to(marl::state*) override;
-    marl::transition *post_transition_type() override;
+    marl::transition *post_transition() override;
+    void set_states(const std::vector<marl::state*>& states);
+
 private:
     float p;
     float r;
     marl::state* s;
+    marl::state_pointer_parser m_tparser;
+    marl::probability_parser m_pparser;
 };
 
 }

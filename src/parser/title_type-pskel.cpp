@@ -38,13 +38,13 @@
 
 #include <xsd/cxx/pre.hxx>
 
-#include "title-pskel.hpp"
+#include "title_type-pskel.hpp"
 
-// title_pskel
+// title_type_pskel
 //
 
-::std::string title_pskel::
-post_title ()
+::std::string title_type_pskel::
+post_title_type ()
 {
   return post_string ();
 }

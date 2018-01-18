@@ -32,11 +32,19 @@ class action;
 class environment {
 public:
     environment() = default;
+    void set_title(const std::string& title);
+    void set_description(const std::string& description);
+    void set_states(const std::vector<marl::state*>&);
+    void set_actions(const std::vector<marl::action*>&);
+    std::string title() const;
+    std::string description() const;
+    std::vector<marl::state*> states() const;
+    std::vector<marl::action*> actions() const;
 protected:
     std::string m_title;
     std::string m_description;
     std::vector<marl::state*> m_states;
-    std::vector<marl::action*> m_action;
+    std::vector<marl::action*> m_actions;
 };
 
 }

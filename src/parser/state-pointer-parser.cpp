@@ -18,8 +18,8 @@
  * along with libmarl_protocols.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "to-parser.hpp"
+#include "state-pointer-parser.hpp"
 
-marl::state* marl::to_parser::post_to() {
-    return find(post_string());
+marl::state* marl::state_pointer_parser::post_state_pointer_type() {
+    return find(this->post_string());
 }

@@ -38,79 +38,94 @@
 
 #include <xsd/cxx/pre.hxx>
 
-#include "transition_type-pskel.hpp"
+#include "transition-pskel.hpp"
 
-#include "probability-pskel.hpp"
+#include "state_pointer_type-pskel.hpp"
 
-#include "to-pskel.hpp"
+#include "probability_type-pskel.hpp"
 
-// transition_type_pskel
+// transition_pskel
 //
 
-void transition_type_pskel::
-probability_parser (::probability_pskel& p)
+void transition_pskel::
+to_parser (::state_pointer_type_pskel& p)
+{
+  this->to_parser_ = &p;
+}
+
+void transition_pskel::
+probability_parser (::probability_type_pskel& p)
 {
   this->probability_parser_ = &p;
 }
 
-void transition_type_pskel::
+void transition_pskel::
 reward_parser (::xml_schema::decimal_pskel& p)
 {
   this->reward_parser_ = &p;
 }
 
-void transition_type_pskel::
-to_parser (::to_pskel& p)
+void transition_pskel::
+parsers (::state_pointer_type_pskel& to,
+         ::probability_type_pskel& probability,
+         ::xml_schema::decimal_pskel& reward)
 {
-  this->to_parser_ = &p;
-}
-
-void transition_type_pskel::
-parsers (::probability_pskel& probability,
-         ::xml_schema::decimal_pskel& reward,
-         ::to_pskel& to)
-{
+  this->to_parser_ = &to;
   this->probability_parser_ = &probability;
   this->reward_parser_ = &reward;
-  this->to_parser_ = &to;
 }
 
-transition_type_pskel::
-transition_type_pskel ()
-: probability_parser_ (0),
+transition_pskel::
+transition_pskel ()
+: to_parser_ (0),
+  probability_parser_ (0),
   reward_parser_ (0),
-  to_parser_ (0),
   v_state_attr_stack_ (sizeof (v_state_attr_), &v_state_attr_first_)
 {
 }
 
-// transition_type_pskel
+// transition_pskel
 //
 
-void transition_type_pskel::
+void transition_pskel::
+to (::marl::state*)
+{
+}
+
+void transition_pskel::
 probability (float)
 {
 }
 
-void transition_type_pskel::
+void transition_pskel::
 reward (double)
-{
-}
-
-void transition_type_pskel::
-to (::marl::state*)
 {
 }
 
 #include <cassert>
 
-// Attribute validation and dispatch functions for transition_type_pskel.
+// Attribute validation and dispatch functions for transition_pskel.
 //
-bool transition_type_pskel::
+bool transition_pskel::
 _attribute_impl_phase_one (const ::xml_schema::ro_string& ns,
                            const ::xml_schema::ro_string& n,
                            const ::xml_schema::ro_string& s)
 {
+  if (n == "to" && ns.empty ())
+  {
+    if (this->to_parser_)
+    {
+      this->to_parser_->pre ();
+      this->to_parser_->_pre_impl ();
+      this->to_parser_->_characters (s);
+      this->to_parser_->_post_impl ();
+      this->to (this->to_parser_->post_state_pointer_type ());
+    }
+
+    static_cast< v_state_attr_* > (this->v_state_attr_stack_.top ())->to = true;
+    return true;
+  }
+
   if (n == "probability" && ns.empty ())
   {
     if (this->probability_parser_)
@@ -119,7 +134,7 @@ _attribute_impl_phase_one (const ::xml_schema::ro_string& ns,
       this->probability_parser_->_pre_impl ();
       this->probability_parser_->_characters (s);
       this->probability_parser_->_post_impl ();
-      this->probability (this->probability_parser_->post_probability ());
+      this->probability (this->probability_parser_->post_probability_type ());
     }
 
     static_cast< v_state_attr_* > (this->v_state_attr_stack_.top ())->probability = true;
@@ -141,49 +156,34 @@ _attribute_impl_phase_one (const ::xml_schema::ro_string& ns,
     return true;
   }
 
-  if (n == "to" && ns.empty ())
-  {
-    if (this->to_parser_)
-    {
-      this->to_parser_->pre ();
-      this->to_parser_->_pre_impl ();
-      this->to_parser_->_characters (s);
-      this->to_parser_->_post_impl ();
-      this->to (this->to_parser_->post_to ());
-    }
-
-    static_cast< v_state_attr_* > (this->v_state_attr_stack_.top ())->to = true;
-    return true;
-  }
-
   return false;
 }
 
-void transition_type_pskel::
+void transition_pskel::
 _pre_a_validate ()
 {
   this->v_state_attr_stack_.push ();
   v_state_attr_& as = *static_cast< v_state_attr_* > (this->v_state_attr_stack_.top ());
 
+  as.to = false;
   as.probability = false;
   as.reward = false;
-  as.to = false;
 }
 
-void transition_type_pskel::
+void transition_pskel::
 _post_a_validate ()
 {
   v_state_attr_& as = *static_cast< v_state_attr_* > (this->v_state_attr_stack_.top ());
 
+  if (!as.to)
+    this->_expected_attribute (
+      "", "to");
   if (!as.probability)
     this->_expected_attribute (
       "", "probability");
   if (!as.reward)
     this->_expected_attribute (
       "", "reward");
-  if (!as.to)
-    this->_expected_attribute (
-      "", "to");
 
   this->v_state_attr_stack_.pop ();
 }

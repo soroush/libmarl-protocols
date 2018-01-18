@@ -22,14 +22,21 @@
 #include <memory>
 
 marl::action::action() :
-    marl::named_object() {
+    marl::named_object(),
+    m_initial_state{nullptr} {
+}
+
+marl::action::action(const std::string& name,
+                     uint32_t id, marl::state* state):
+    marl::named_object(name, id),
+    m_initial_state{state} {
 
 }
 
-marl::action::action(const std::string& name, uint32_t id):
-    marl::named_object(name, id) {
-
+marl::state* marl::action::from() const {
+    return this->m_initial_state;
 }
+
 
 void marl::action::add_transition(marl::transition* t) {
     m_transitions.push_back(t);

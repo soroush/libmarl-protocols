@@ -20,10 +20,18 @@
 
 #include "actions-parser.hpp"
 
-void marl::actions_parser::action(marl::action* a) {
-    this->m_actions.push_back(a);
+marl::actions_parser::actions_parser() : actions_pskel() {
+	action_parser(m_aparser);
 }
 
-std::vector<marl::action*> marl::actions_parser::post_actions_type() {
-    return this->m_actions;
+void marl::actions_parser::action(marl::action* a) {
+	this->m_actions.push_back(a);
+}
+
+std::vector<marl::action*> marl::actions_parser::post_actions() {
+	return this->m_actions;
+}
+
+void marl::actions_parser::set_states(const std::vector<marl::state*>& states) {
+	m_aparser.set_states(states);
 }

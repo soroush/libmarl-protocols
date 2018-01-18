@@ -154,22 +154,11 @@ am__installdirs = "$(DESTDIR)$(libdir)" \
 	"$(DESTDIR)$(libmarl_protocols_includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
-libmarl_protocols_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
+libmarl_protocols_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_libmarl_protocols_la_OBJECTS =  \
 	details/libmarl_protocols_la-named-object.lo \
-	parser/libmarl_protocols_la-environment-parser.lo \
-	parser/libmarl_protocols_la-to-pskel.lo \
-	parser/libmarl_protocols_la-environment-pskel.lo \
-	parser/libmarl_protocols_la-probability-pskel.lo \
-	parser/libmarl_protocols_la-from-pskel.lo \
-	parser/libmarl_protocols_la-title-pskel.lo \
-	parser/libmarl_protocols_la-state_type-pskel.lo \
-	parser/libmarl_protocols_la-transition_type-pskel.lo \
-	parser/libmarl_protocols_la-states_type-pskel.lo \
-	parser/libmarl_protocols_la-actions_type-pskel.lo \
-	parser/libmarl_protocols_la-action_type-pskel.lo \
-	parser/libmarl_protocols_la-environment_type-pskel.lo \
 	libmarl_protocols_la-semaphore.lo \
 	libmarl_protocols_la-message-base.lo \
 	libmarl_protocols_la-client-base.lo \
@@ -183,15 +172,27 @@ am_libmarl_protocols_la_OBJECTS =  \
 	libmarl_protocols_la-transition.lo \
 	libmarl_protocols_la-action.lo \
 	libmarl_protocols_la-environment.lo \
+	parser/libmarl_protocols_la-mdp-pskel.lo \
+	parser/libmarl_protocols_la-environment-pskel.lo \
+	parser/libmarl_protocols_la-environment-parser.lo \
+	parser/libmarl_protocols_la-state-pskel.lo \
 	parser/libmarl_protocols_la-state-parser.lo \
+	parser/libmarl_protocols_la-states-pskel.lo \
 	parser/libmarl_protocols_la-states-parser.lo \
-	parser/libmarl_protocols_la-action-parser.lo \
-	parser/libmarl_protocols_la-actions-parser.lo \
+	parser/libmarl_protocols_la-state_pointer_type-pskel.lo \
 	parser/libmarl_protocols_la-probability-parser.lo \
+	parser/libmarl_protocols_la-probability_type-pskel.lo \
+	parser/libmarl_protocols_la-state-pointer-parser.lo \
 	parser/libmarl_protocols_la-state-pointer-helper.lo \
-	parser/libmarl_protocols_la-to-parser.lo \
-	parser/libmarl_protocols_la-from-parser.lo \
-	parser/libmarl_protocols_la-transition-parser.lo
+	parser/libmarl_protocols_la-transition-parser.lo \
+	parser/libmarl_protocols_la-transition-pskel.lo \
+	parser/libmarl_protocols_la-title-parser.lo \
+	parser/libmarl_protocols_la-title_type-pskel.lo \
+	parser/libmarl_protocols_la-id-parser.lo \
+	parser/libmarl_protocols_la-action-parser.lo \
+	parser/libmarl_protocols_la-action-pskel.lo \
+	parser/libmarl_protocols_la-actions-parser.lo \
+	parser/libmarl_protocols_la-actions-pskel.lo
 libmarl_protocols_la_OBJECTS = $(am_libmarl_protocols_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -295,6 +296,8 @@ AX_PACKAGE_REQUIRES_PRIVATE = @AX_PACKAGE_REQUIRES_PRIVATE@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
+CPNET_CFLAGS = @CPNET_CFLAGS@
+CPNET_LIBS = @CPNET_LIBS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
@@ -313,6 +316,8 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FLOG_CFLAGS = @FLOG_CFLAGS@
+FLOG_LIBS = @FLOG_LIBS@
 GREP = @GREP@
 HAVE_CXX11 = @HAVE_CXX11@
 INSTALL = @INSTALL@
@@ -418,36 +423,39 @@ ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS} -I m4
 AM_CXXFLAGS = --pedantic -Wall -Werror -DBUILD_LIBMARL_PROTOCOLS
 lib_LTLIBRARIES = libmarl_protocols.la
 libmarl_protocols_la_CPPFLAGS = \
+    $(CPNET_CFLAGS) \
+    $(FLOG_CFLAGS) \
     $(XERCES_CFLAGS)
+
+libmarl_protocols_la_LIBADD = \
+    $(CPNET_LIBS) \
+    $(FLOG_LIBS) \
+    $(XERCES_LIBS)
 
 libmarl_protocols_la_LDFLAGS = -version-info $(LIBMARL_SO_VERSION) \
 	-fvisibility=hidden
 libmarl_protocols_includedir = $(includedir)/libmarl-protocols
+
+# Parser implementation
 nobase_libmarl_protocols_include_HEADERS = libmarl-exports.hpp \
-	details/named-object.hpp parser/environment-parser.hpp \
-	parser/from-pskel.hpp parser/title-pskel.hpp \
-	parser/to-pskel.hpp parser/environment-pskel.hpp \
-	parser/probability-pskel.hpp parser/state_type-pskel.hpp \
-	parser/transition_type-pskel.hpp parser/states_type-pskel.hpp \
-	parser/actions_type-pskel.hpp \
-	parser/environment_type-pskel.hpp parser/action_type-pskel.hpp \
-	semaphore.hpp message-base.hpp client-base.hpp \
-	request-base.hpp action-select-request.hpp \
+	details/named-object.hpp semaphore.hpp message-base.hpp \
+	client-base.hpp request-base.hpp action-select-request.hpp \
 	action-select-response.hpp update-table-request.hpp \
 	update-table-response.hpp response-base.hpp state.hpp \
-	transition.hpp action.hpp environment.hpp \
-	parser/state-parser.hpp parser/states-parser.hpp \
-	parser/action-parser.hpp parser/actions-parser.hpp \
-	parser/probability-parser.hpp parser/state-pointer-helper.hpp \
-	parser/from-parser.hpp parser/transition-parser.hpp
-libmarl_protocols_la_SOURCES = $(libmarl_protocols_include_HEADERS) \
-	details/named-object.cpp parser/environment-parser.cpp \
-	parser/to-pskel.cpp parser/environment-pskel.cpp \
-	parser/probability-pskel.cpp parser/from-pskel.cpp \
-	parser/title-pskel.cpp parser/state_type-pskel.cpp \
-	parser/transition_type-pskel.cpp parser/states_type-pskel.cpp \
-	parser/actions_type-pskel.cpp parser/action_type-pskel.cpp \
-	parser/environment_type-pskel.cpp semaphore.cpp \
+	transition.hpp action.hpp environment.hpp parser/mdp-pskel.hpp \
+	parser/environment-pskel.hpp parser/environment-parser.hpp \
+	parser/state-pskel.hpp parser/state-parser.hpp \
+	parser/states-pskel.hpp parser/states-parser.hpp \
+	parser/state_pointer_type-pskel.hpp \
+	parser/probability-parser.hpp \
+	parser/probability_type-pskel.hpp \
+	parser/state-pointer-parser.hpp \
+	parser/state-pointer-helper.hpp parser/transition-parser.hpp \
+	parser/transition-pskel.hpp parser/title-parser.hpp \
+	parser/title_type-pskel.hpp parser/id-parser.hpp \
+	parser/action-parser.hpp parser/action-pskel.hpp \
+	parser/actions-parser.hpp parser/actions-pskel.hpp
+libmarl_protocols_la_SOURCES = details/named-object.cpp semaphore.cpp \
 	message-base.cpp message-base-impl.hpp client-base.cpp \
 	request-base.cpp request-base-impl.hpp \
 	action-select-request.cpp action-select-request-impl.hpp \
@@ -455,15 +463,19 @@ libmarl_protocols_la_SOURCES = $(libmarl_protocols_include_HEADERS) \
 	update-table-request.cpp update-table-request-impl.hpp \
 	update-table-response.cpp update-table-response-impl.hpp \
 	response-base.cpp response-base-impl.hpp state.cpp \
-	transition.cpp action.cpp environment.cpp \
-	parser/state-parser.cpp parser/states-parser.cpp \
-	parser/action-parser.cpp parser/actions-parser.cpp \
-	parser/probability-parser.cpp parser/state-pointer-helper.cpp \
-	parser/to-parser.cpp parser/from-parser.cpp \
-	parser/transition-parser.cpp
-libmarl_protocols_la_LIBADD = \
-    $(XERCES_LIBS)
-
+	transition.cpp action.cpp environment.cpp parser/mdp-pskel.cpp \
+	parser/environment-pskel.cpp parser/environment-parser.cpp \
+	parser/state-pskel.cpp parser/state-parser.cpp \
+	parser/states-pskel.cpp parser/states-parser.cpp \
+	parser/state_pointer_type-pskel.cpp \
+	parser/probability-parser.cpp \
+	parser/probability_type-pskel.cpp \
+	parser/state-pointer-parser.cpp \
+	parser/state-pointer-helper.cpp parser/transition-parser.cpp \
+	parser/transition-pskel.cpp parser/title-parser.cpp \
+	parser/title_type-pskel.cpp parser/id-parser.cpp \
+	parser/action-parser.cpp parser/action-pskel.cpp \
+	parser/actions-parser.cpp parser/actions-pskel.cpp
 all: all-am
 
 .SUFFIXES:
@@ -546,48 +558,48 @@ parser/$(am__dirstamp):
 parser/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) parser/$(DEPDIR)
 	@: > parser/$(DEPDIR)/$(am__dirstamp)
-parser/libmarl_protocols_la-environment-parser.lo:  \
-	parser/$(am__dirstamp) parser/$(DEPDIR)/$(am__dirstamp)
-parser/libmarl_protocols_la-to-pskel.lo: parser/$(am__dirstamp) \
+parser/libmarl_protocols_la-mdp-pskel.lo: parser/$(am__dirstamp) \
 	parser/$(DEPDIR)/$(am__dirstamp)
 parser/libmarl_protocols_la-environment-pskel.lo:  \
 	parser/$(am__dirstamp) parser/$(DEPDIR)/$(am__dirstamp)
-parser/libmarl_protocols_la-probability-pskel.lo:  \
+parser/libmarl_protocols_la-environment-parser.lo:  \
 	parser/$(am__dirstamp) parser/$(DEPDIR)/$(am__dirstamp)
-parser/libmarl_protocols_la-from-pskel.lo: parser/$(am__dirstamp) \
+parser/libmarl_protocols_la-state-pskel.lo: parser/$(am__dirstamp) \
 	parser/$(DEPDIR)/$(am__dirstamp)
-parser/libmarl_protocols_la-title-pskel.lo: parser/$(am__dirstamp) \
-	parser/$(DEPDIR)/$(am__dirstamp)
-parser/libmarl_protocols_la-state_type-pskel.lo:  \
-	parser/$(am__dirstamp) parser/$(DEPDIR)/$(am__dirstamp)
-parser/libmarl_protocols_la-transition_type-pskel.lo:  \
-	parser/$(am__dirstamp) parser/$(DEPDIR)/$(am__dirstamp)
-parser/libmarl_protocols_la-states_type-pskel.lo:  \
-	parser/$(am__dirstamp) parser/$(DEPDIR)/$(am__dirstamp)
-parser/libmarl_protocols_la-actions_type-pskel.lo:  \
-	parser/$(am__dirstamp) parser/$(DEPDIR)/$(am__dirstamp)
-parser/libmarl_protocols_la-action_type-pskel.lo:  \
-	parser/$(am__dirstamp) parser/$(DEPDIR)/$(am__dirstamp)
-parser/libmarl_protocols_la-environment_type-pskel.lo:  \
-	parser/$(am__dirstamp) parser/$(DEPDIR)/$(am__dirstamp)
 parser/libmarl_protocols_la-state-parser.lo: parser/$(am__dirstamp) \
+	parser/$(DEPDIR)/$(am__dirstamp)
+parser/libmarl_protocols_la-states-pskel.lo: parser/$(am__dirstamp) \
 	parser/$(DEPDIR)/$(am__dirstamp)
 parser/libmarl_protocols_la-states-parser.lo: parser/$(am__dirstamp) \
 	parser/$(DEPDIR)/$(am__dirstamp)
-parser/libmarl_protocols_la-action-parser.lo: parser/$(am__dirstamp) \
-	parser/$(DEPDIR)/$(am__dirstamp)
-parser/libmarl_protocols_la-actions-parser.lo: parser/$(am__dirstamp) \
-	parser/$(DEPDIR)/$(am__dirstamp)
+parser/libmarl_protocols_la-state_pointer_type-pskel.lo:  \
+	parser/$(am__dirstamp) parser/$(DEPDIR)/$(am__dirstamp)
 parser/libmarl_protocols_la-probability-parser.lo:  \
+	parser/$(am__dirstamp) parser/$(DEPDIR)/$(am__dirstamp)
+parser/libmarl_protocols_la-probability_type-pskel.lo:  \
+	parser/$(am__dirstamp) parser/$(DEPDIR)/$(am__dirstamp)
+parser/libmarl_protocols_la-state-pointer-parser.lo:  \
 	parser/$(am__dirstamp) parser/$(DEPDIR)/$(am__dirstamp)
 parser/libmarl_protocols_la-state-pointer-helper.lo:  \
 	parser/$(am__dirstamp) parser/$(DEPDIR)/$(am__dirstamp)
-parser/libmarl_protocols_la-to-parser.lo: parser/$(am__dirstamp) \
-	parser/$(DEPDIR)/$(am__dirstamp)
-parser/libmarl_protocols_la-from-parser.lo: parser/$(am__dirstamp) \
-	parser/$(DEPDIR)/$(am__dirstamp)
 parser/libmarl_protocols_la-transition-parser.lo:  \
 	parser/$(am__dirstamp) parser/$(DEPDIR)/$(am__dirstamp)
+parser/libmarl_protocols_la-transition-pskel.lo:  \
+	parser/$(am__dirstamp) parser/$(DEPDIR)/$(am__dirstamp)
+parser/libmarl_protocols_la-title-parser.lo: parser/$(am__dirstamp) \
+	parser/$(DEPDIR)/$(am__dirstamp)
+parser/libmarl_protocols_la-title_type-pskel.lo:  \
+	parser/$(am__dirstamp) parser/$(DEPDIR)/$(am__dirstamp)
+parser/libmarl_protocols_la-id-parser.lo: parser/$(am__dirstamp) \
+	parser/$(DEPDIR)/$(am__dirstamp)
+parser/libmarl_protocols_la-action-parser.lo: parser/$(am__dirstamp) \
+	parser/$(DEPDIR)/$(am__dirstamp)
+parser/libmarl_protocols_la-action-pskel.lo: parser/$(am__dirstamp) \
+	parser/$(DEPDIR)/$(am__dirstamp)
+parser/libmarl_protocols_la-actions-parser.lo: parser/$(am__dirstamp) \
+	parser/$(DEPDIR)/$(am__dirstamp)
+parser/libmarl_protocols_la-actions-pskel.lo: parser/$(am__dirstamp) \
+	parser/$(DEPDIR)/$(am__dirstamp)
 
 libmarl_protocols.la: $(libmarl_protocols_la_OBJECTS) $(libmarl_protocols_la_DEPENDENCIES) $(EXTRA_libmarl_protocols_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(libmarl_protocols_la_LINK) -rpath $(libdir) $(libmarl_protocols_la_OBJECTS) $(libmarl_protocols_la_LIBADD) $(LIBS)
@@ -617,26 +629,26 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmarl_protocols_la-update-table-response.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@details/$(DEPDIR)/libmarl_protocols_la-named-object.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-action-parser.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-action_type-pskel.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-action-pskel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-actions-parser.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-actions_type-pskel.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-actions-pskel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-environment-parser.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-environment-pskel.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-environment_type-pskel.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-from-parser.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-from-pskel.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-id-parser.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-mdp-pskel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-probability-parser.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-probability-pskel.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-probability_type-pskel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-state-parser.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-state-pointer-helper.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-state_type-pskel.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-state-pointer-parser.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-state-pskel.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-state_pointer_type-pskel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-states-parser.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-states_type-pskel.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-title-pskel.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-to-parser.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-to-pskel.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-states-pskel.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-title-parser.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-title_type-pskel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-transition-parser.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-transition_type-pskel.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@parser/$(DEPDIR)/libmarl_protocols_la-transition-pskel.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -668,90 +680,6 @@ details/libmarl_protocols_la-named-object.lo: details/named-object.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='details/named-object.cpp' object='details/libmarl_protocols_la-named-object.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o details/libmarl_protocols_la-named-object.lo `test -f 'details/named-object.cpp' || echo '$(srcdir)/'`details/named-object.cpp
-
-parser/libmarl_protocols_la-environment-parser.lo: parser/environment-parser.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-environment-parser.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-environment-parser.Tpo -c -o parser/libmarl_protocols_la-environment-parser.lo `test -f 'parser/environment-parser.cpp' || echo '$(srcdir)/'`parser/environment-parser.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-environment-parser.Tpo parser/$(DEPDIR)/libmarl_protocols_la-environment-parser.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/environment-parser.cpp' object='parser/libmarl_protocols_la-environment-parser.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-environment-parser.lo `test -f 'parser/environment-parser.cpp' || echo '$(srcdir)/'`parser/environment-parser.cpp
-
-parser/libmarl_protocols_la-to-pskel.lo: parser/to-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-to-pskel.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-to-pskel.Tpo -c -o parser/libmarl_protocols_la-to-pskel.lo `test -f 'parser/to-pskel.cpp' || echo '$(srcdir)/'`parser/to-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-to-pskel.Tpo parser/$(DEPDIR)/libmarl_protocols_la-to-pskel.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/to-pskel.cpp' object='parser/libmarl_protocols_la-to-pskel.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-to-pskel.lo `test -f 'parser/to-pskel.cpp' || echo '$(srcdir)/'`parser/to-pskel.cpp
-
-parser/libmarl_protocols_la-environment-pskel.lo: parser/environment-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-environment-pskel.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-environment-pskel.Tpo -c -o parser/libmarl_protocols_la-environment-pskel.lo `test -f 'parser/environment-pskel.cpp' || echo '$(srcdir)/'`parser/environment-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-environment-pskel.Tpo parser/$(DEPDIR)/libmarl_protocols_la-environment-pskel.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/environment-pskel.cpp' object='parser/libmarl_protocols_la-environment-pskel.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-environment-pskel.lo `test -f 'parser/environment-pskel.cpp' || echo '$(srcdir)/'`parser/environment-pskel.cpp
-
-parser/libmarl_protocols_la-probability-pskel.lo: parser/probability-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-probability-pskel.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-probability-pskel.Tpo -c -o parser/libmarl_protocols_la-probability-pskel.lo `test -f 'parser/probability-pskel.cpp' || echo '$(srcdir)/'`parser/probability-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-probability-pskel.Tpo parser/$(DEPDIR)/libmarl_protocols_la-probability-pskel.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/probability-pskel.cpp' object='parser/libmarl_protocols_la-probability-pskel.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-probability-pskel.lo `test -f 'parser/probability-pskel.cpp' || echo '$(srcdir)/'`parser/probability-pskel.cpp
-
-parser/libmarl_protocols_la-from-pskel.lo: parser/from-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-from-pskel.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-from-pskel.Tpo -c -o parser/libmarl_protocols_la-from-pskel.lo `test -f 'parser/from-pskel.cpp' || echo '$(srcdir)/'`parser/from-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-from-pskel.Tpo parser/$(DEPDIR)/libmarl_protocols_la-from-pskel.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/from-pskel.cpp' object='parser/libmarl_protocols_la-from-pskel.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-from-pskel.lo `test -f 'parser/from-pskel.cpp' || echo '$(srcdir)/'`parser/from-pskel.cpp
-
-parser/libmarl_protocols_la-title-pskel.lo: parser/title-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-title-pskel.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-title-pskel.Tpo -c -o parser/libmarl_protocols_la-title-pskel.lo `test -f 'parser/title-pskel.cpp' || echo '$(srcdir)/'`parser/title-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-title-pskel.Tpo parser/$(DEPDIR)/libmarl_protocols_la-title-pskel.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/title-pskel.cpp' object='parser/libmarl_protocols_la-title-pskel.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-title-pskel.lo `test -f 'parser/title-pskel.cpp' || echo '$(srcdir)/'`parser/title-pskel.cpp
-
-parser/libmarl_protocols_la-state_type-pskel.lo: parser/state_type-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-state_type-pskel.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-state_type-pskel.Tpo -c -o parser/libmarl_protocols_la-state_type-pskel.lo `test -f 'parser/state_type-pskel.cpp' || echo '$(srcdir)/'`parser/state_type-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-state_type-pskel.Tpo parser/$(DEPDIR)/libmarl_protocols_la-state_type-pskel.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/state_type-pskel.cpp' object='parser/libmarl_protocols_la-state_type-pskel.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-state_type-pskel.lo `test -f 'parser/state_type-pskel.cpp' || echo '$(srcdir)/'`parser/state_type-pskel.cpp
-
-parser/libmarl_protocols_la-transition_type-pskel.lo: parser/transition_type-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-transition_type-pskel.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-transition_type-pskel.Tpo -c -o parser/libmarl_protocols_la-transition_type-pskel.lo `test -f 'parser/transition_type-pskel.cpp' || echo '$(srcdir)/'`parser/transition_type-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-transition_type-pskel.Tpo parser/$(DEPDIR)/libmarl_protocols_la-transition_type-pskel.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/transition_type-pskel.cpp' object='parser/libmarl_protocols_la-transition_type-pskel.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-transition_type-pskel.lo `test -f 'parser/transition_type-pskel.cpp' || echo '$(srcdir)/'`parser/transition_type-pskel.cpp
-
-parser/libmarl_protocols_la-states_type-pskel.lo: parser/states_type-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-states_type-pskel.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-states_type-pskel.Tpo -c -o parser/libmarl_protocols_la-states_type-pskel.lo `test -f 'parser/states_type-pskel.cpp' || echo '$(srcdir)/'`parser/states_type-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-states_type-pskel.Tpo parser/$(DEPDIR)/libmarl_protocols_la-states_type-pskel.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/states_type-pskel.cpp' object='parser/libmarl_protocols_la-states_type-pskel.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-states_type-pskel.lo `test -f 'parser/states_type-pskel.cpp' || echo '$(srcdir)/'`parser/states_type-pskel.cpp
-
-parser/libmarl_protocols_la-actions_type-pskel.lo: parser/actions_type-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-actions_type-pskel.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-actions_type-pskel.Tpo -c -o parser/libmarl_protocols_la-actions_type-pskel.lo `test -f 'parser/actions_type-pskel.cpp' || echo '$(srcdir)/'`parser/actions_type-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-actions_type-pskel.Tpo parser/$(DEPDIR)/libmarl_protocols_la-actions_type-pskel.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/actions_type-pskel.cpp' object='parser/libmarl_protocols_la-actions_type-pskel.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-actions_type-pskel.lo `test -f 'parser/actions_type-pskel.cpp' || echo '$(srcdir)/'`parser/actions_type-pskel.cpp
-
-parser/libmarl_protocols_la-action_type-pskel.lo: parser/action_type-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-action_type-pskel.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-action_type-pskel.Tpo -c -o parser/libmarl_protocols_la-action_type-pskel.lo `test -f 'parser/action_type-pskel.cpp' || echo '$(srcdir)/'`parser/action_type-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-action_type-pskel.Tpo parser/$(DEPDIR)/libmarl_protocols_la-action_type-pskel.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/action_type-pskel.cpp' object='parser/libmarl_protocols_la-action_type-pskel.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-action_type-pskel.lo `test -f 'parser/action_type-pskel.cpp' || echo '$(srcdir)/'`parser/action_type-pskel.cpp
-
-parser/libmarl_protocols_la-environment_type-pskel.lo: parser/environment_type-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-environment_type-pskel.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-environment_type-pskel.Tpo -c -o parser/libmarl_protocols_la-environment_type-pskel.lo `test -f 'parser/environment_type-pskel.cpp' || echo '$(srcdir)/'`parser/environment_type-pskel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-environment_type-pskel.Tpo parser/$(DEPDIR)/libmarl_protocols_la-environment_type-pskel.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/environment_type-pskel.cpp' object='parser/libmarl_protocols_la-environment_type-pskel.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-environment_type-pskel.lo `test -f 'parser/environment_type-pskel.cpp' || echo '$(srcdir)/'`parser/environment_type-pskel.cpp
 
 libmarl_protocols_la-semaphore.lo: semaphore.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libmarl_protocols_la-semaphore.lo -MD -MP -MF $(DEPDIR)/libmarl_protocols_la-semaphore.Tpo -c -o libmarl_protocols_la-semaphore.lo `test -f 'semaphore.cpp' || echo '$(srcdir)/'`semaphore.cpp
@@ -844,12 +772,47 @@ libmarl_protocols_la-environment.lo: environment.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmarl_protocols_la-environment.lo `test -f 'environment.cpp' || echo '$(srcdir)/'`environment.cpp
 
+parser/libmarl_protocols_la-mdp-pskel.lo: parser/mdp-pskel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-mdp-pskel.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-mdp-pskel.Tpo -c -o parser/libmarl_protocols_la-mdp-pskel.lo `test -f 'parser/mdp-pskel.cpp' || echo '$(srcdir)/'`parser/mdp-pskel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-mdp-pskel.Tpo parser/$(DEPDIR)/libmarl_protocols_la-mdp-pskel.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/mdp-pskel.cpp' object='parser/libmarl_protocols_la-mdp-pskel.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-mdp-pskel.lo `test -f 'parser/mdp-pskel.cpp' || echo '$(srcdir)/'`parser/mdp-pskel.cpp
+
+parser/libmarl_protocols_la-environment-pskel.lo: parser/environment-pskel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-environment-pskel.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-environment-pskel.Tpo -c -o parser/libmarl_protocols_la-environment-pskel.lo `test -f 'parser/environment-pskel.cpp' || echo '$(srcdir)/'`parser/environment-pskel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-environment-pskel.Tpo parser/$(DEPDIR)/libmarl_protocols_la-environment-pskel.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/environment-pskel.cpp' object='parser/libmarl_protocols_la-environment-pskel.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-environment-pskel.lo `test -f 'parser/environment-pskel.cpp' || echo '$(srcdir)/'`parser/environment-pskel.cpp
+
+parser/libmarl_protocols_la-environment-parser.lo: parser/environment-parser.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-environment-parser.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-environment-parser.Tpo -c -o parser/libmarl_protocols_la-environment-parser.lo `test -f 'parser/environment-parser.cpp' || echo '$(srcdir)/'`parser/environment-parser.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-environment-parser.Tpo parser/$(DEPDIR)/libmarl_protocols_la-environment-parser.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/environment-parser.cpp' object='parser/libmarl_protocols_la-environment-parser.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-environment-parser.lo `test -f 'parser/environment-parser.cpp' || echo '$(srcdir)/'`parser/environment-parser.cpp
+
+parser/libmarl_protocols_la-state-pskel.lo: parser/state-pskel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-state-pskel.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-state-pskel.Tpo -c -o parser/libmarl_protocols_la-state-pskel.lo `test -f 'parser/state-pskel.cpp' || echo '$(srcdir)/'`parser/state-pskel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-state-pskel.Tpo parser/$(DEPDIR)/libmarl_protocols_la-state-pskel.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/state-pskel.cpp' object='parser/libmarl_protocols_la-state-pskel.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-state-pskel.lo `test -f 'parser/state-pskel.cpp' || echo '$(srcdir)/'`parser/state-pskel.cpp
+
 parser/libmarl_protocols_la-state-parser.lo: parser/state-parser.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-state-parser.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-state-parser.Tpo -c -o parser/libmarl_protocols_la-state-parser.lo `test -f 'parser/state-parser.cpp' || echo '$(srcdir)/'`parser/state-parser.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-state-parser.Tpo parser/$(DEPDIR)/libmarl_protocols_la-state-parser.Plo
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/state-parser.cpp' object='parser/libmarl_protocols_la-state-parser.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-state-parser.lo `test -f 'parser/state-parser.cpp' || echo '$(srcdir)/'`parser/state-parser.cpp
+
+parser/libmarl_protocols_la-states-pskel.lo: parser/states-pskel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-states-pskel.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-states-pskel.Tpo -c -o parser/libmarl_protocols_la-states-pskel.lo `test -f 'parser/states-pskel.cpp' || echo '$(srcdir)/'`parser/states-pskel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-states-pskel.Tpo parser/$(DEPDIR)/libmarl_protocols_la-states-pskel.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/states-pskel.cpp' object='parser/libmarl_protocols_la-states-pskel.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-states-pskel.lo `test -f 'parser/states-pskel.cpp' || echo '$(srcdir)/'`parser/states-pskel.cpp
 
 parser/libmarl_protocols_la-states-parser.lo: parser/states-parser.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-states-parser.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-states-parser.Tpo -c -o parser/libmarl_protocols_la-states-parser.lo `test -f 'parser/states-parser.cpp' || echo '$(srcdir)/'`parser/states-parser.cpp
@@ -858,19 +821,12 @@ parser/libmarl_protocols_la-states-parser.lo: parser/states-parser.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-states-parser.lo `test -f 'parser/states-parser.cpp' || echo '$(srcdir)/'`parser/states-parser.cpp
 
-parser/libmarl_protocols_la-action-parser.lo: parser/action-parser.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-action-parser.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-action-parser.Tpo -c -o parser/libmarl_protocols_la-action-parser.lo `test -f 'parser/action-parser.cpp' || echo '$(srcdir)/'`parser/action-parser.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-action-parser.Tpo parser/$(DEPDIR)/libmarl_protocols_la-action-parser.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/action-parser.cpp' object='parser/libmarl_protocols_la-action-parser.lo' libtool=yes @AMDEPBACKSLASH@
+parser/libmarl_protocols_la-state_pointer_type-pskel.lo: parser/state_pointer_type-pskel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-state_pointer_type-pskel.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-state_pointer_type-pskel.Tpo -c -o parser/libmarl_protocols_la-state_pointer_type-pskel.lo `test -f 'parser/state_pointer_type-pskel.cpp' || echo '$(srcdir)/'`parser/state_pointer_type-pskel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-state_pointer_type-pskel.Tpo parser/$(DEPDIR)/libmarl_protocols_la-state_pointer_type-pskel.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/state_pointer_type-pskel.cpp' object='parser/libmarl_protocols_la-state_pointer_type-pskel.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-action-parser.lo `test -f 'parser/action-parser.cpp' || echo '$(srcdir)/'`parser/action-parser.cpp
-
-parser/libmarl_protocols_la-actions-parser.lo: parser/actions-parser.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-actions-parser.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-actions-parser.Tpo -c -o parser/libmarl_protocols_la-actions-parser.lo `test -f 'parser/actions-parser.cpp' || echo '$(srcdir)/'`parser/actions-parser.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-actions-parser.Tpo parser/$(DEPDIR)/libmarl_protocols_la-actions-parser.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/actions-parser.cpp' object='parser/libmarl_protocols_la-actions-parser.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-actions-parser.lo `test -f 'parser/actions-parser.cpp' || echo '$(srcdir)/'`parser/actions-parser.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-state_pointer_type-pskel.lo `test -f 'parser/state_pointer_type-pskel.cpp' || echo '$(srcdir)/'`parser/state_pointer_type-pskel.cpp
 
 parser/libmarl_protocols_la-probability-parser.lo: parser/probability-parser.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-probability-parser.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-probability-parser.Tpo -c -o parser/libmarl_protocols_la-probability-parser.lo `test -f 'parser/probability-parser.cpp' || echo '$(srcdir)/'`parser/probability-parser.cpp
@@ -879,6 +835,20 @@ parser/libmarl_protocols_la-probability-parser.lo: parser/probability-parser.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-probability-parser.lo `test -f 'parser/probability-parser.cpp' || echo '$(srcdir)/'`parser/probability-parser.cpp
 
+parser/libmarl_protocols_la-probability_type-pskel.lo: parser/probability_type-pskel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-probability_type-pskel.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-probability_type-pskel.Tpo -c -o parser/libmarl_protocols_la-probability_type-pskel.lo `test -f 'parser/probability_type-pskel.cpp' || echo '$(srcdir)/'`parser/probability_type-pskel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-probability_type-pskel.Tpo parser/$(DEPDIR)/libmarl_protocols_la-probability_type-pskel.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/probability_type-pskel.cpp' object='parser/libmarl_protocols_la-probability_type-pskel.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-probability_type-pskel.lo `test -f 'parser/probability_type-pskel.cpp' || echo '$(srcdir)/'`parser/probability_type-pskel.cpp
+
+parser/libmarl_protocols_la-state-pointer-parser.lo: parser/state-pointer-parser.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-state-pointer-parser.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-state-pointer-parser.Tpo -c -o parser/libmarl_protocols_la-state-pointer-parser.lo `test -f 'parser/state-pointer-parser.cpp' || echo '$(srcdir)/'`parser/state-pointer-parser.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-state-pointer-parser.Tpo parser/$(DEPDIR)/libmarl_protocols_la-state-pointer-parser.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/state-pointer-parser.cpp' object='parser/libmarl_protocols_la-state-pointer-parser.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-state-pointer-parser.lo `test -f 'parser/state-pointer-parser.cpp' || echo '$(srcdir)/'`parser/state-pointer-parser.cpp
+
 parser/libmarl_protocols_la-state-pointer-helper.lo: parser/state-pointer-helper.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-state-pointer-helper.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-state-pointer-helper.Tpo -c -o parser/libmarl_protocols_la-state-pointer-helper.lo `test -f 'parser/state-pointer-helper.cpp' || echo '$(srcdir)/'`parser/state-pointer-helper.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-state-pointer-helper.Tpo parser/$(DEPDIR)/libmarl_protocols_la-state-pointer-helper.Plo
@@ -886,26 +856,68 @@ parser/libmarl_protocols_la-state-pointer-helper.lo: parser/state-pointer-helper
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-state-pointer-helper.lo `test -f 'parser/state-pointer-helper.cpp' || echo '$(srcdir)/'`parser/state-pointer-helper.cpp
 
-parser/libmarl_protocols_la-to-parser.lo: parser/to-parser.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-to-parser.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-to-parser.Tpo -c -o parser/libmarl_protocols_la-to-parser.lo `test -f 'parser/to-parser.cpp' || echo '$(srcdir)/'`parser/to-parser.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-to-parser.Tpo parser/$(DEPDIR)/libmarl_protocols_la-to-parser.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/to-parser.cpp' object='parser/libmarl_protocols_la-to-parser.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-to-parser.lo `test -f 'parser/to-parser.cpp' || echo '$(srcdir)/'`parser/to-parser.cpp
-
-parser/libmarl_protocols_la-from-parser.lo: parser/from-parser.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-from-parser.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-from-parser.Tpo -c -o parser/libmarl_protocols_la-from-parser.lo `test -f 'parser/from-parser.cpp' || echo '$(srcdir)/'`parser/from-parser.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-from-parser.Tpo parser/$(DEPDIR)/libmarl_protocols_la-from-parser.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/from-parser.cpp' object='parser/libmarl_protocols_la-from-parser.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-from-parser.lo `test -f 'parser/from-parser.cpp' || echo '$(srcdir)/'`parser/from-parser.cpp
-
 parser/libmarl_protocols_la-transition-parser.lo: parser/transition-parser.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-transition-parser.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-transition-parser.Tpo -c -o parser/libmarl_protocols_la-transition-parser.lo `test -f 'parser/transition-parser.cpp' || echo '$(srcdir)/'`parser/transition-parser.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-transition-parser.Tpo parser/$(DEPDIR)/libmarl_protocols_la-transition-parser.Plo
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/transition-parser.cpp' object='parser/libmarl_protocols_la-transition-parser.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-transition-parser.lo `test -f 'parser/transition-parser.cpp' || echo '$(srcdir)/'`parser/transition-parser.cpp
+
+parser/libmarl_protocols_la-transition-pskel.lo: parser/transition-pskel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-transition-pskel.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-transition-pskel.Tpo -c -o parser/libmarl_protocols_la-transition-pskel.lo `test -f 'parser/transition-pskel.cpp' || echo '$(srcdir)/'`parser/transition-pskel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-transition-pskel.Tpo parser/$(DEPDIR)/libmarl_protocols_la-transition-pskel.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/transition-pskel.cpp' object='parser/libmarl_protocols_la-transition-pskel.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-transition-pskel.lo `test -f 'parser/transition-pskel.cpp' || echo '$(srcdir)/'`parser/transition-pskel.cpp
+
+parser/libmarl_protocols_la-title-parser.lo: parser/title-parser.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-title-parser.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-title-parser.Tpo -c -o parser/libmarl_protocols_la-title-parser.lo `test -f 'parser/title-parser.cpp' || echo '$(srcdir)/'`parser/title-parser.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-title-parser.Tpo parser/$(DEPDIR)/libmarl_protocols_la-title-parser.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/title-parser.cpp' object='parser/libmarl_protocols_la-title-parser.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-title-parser.lo `test -f 'parser/title-parser.cpp' || echo '$(srcdir)/'`parser/title-parser.cpp
+
+parser/libmarl_protocols_la-title_type-pskel.lo: parser/title_type-pskel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-title_type-pskel.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-title_type-pskel.Tpo -c -o parser/libmarl_protocols_la-title_type-pskel.lo `test -f 'parser/title_type-pskel.cpp' || echo '$(srcdir)/'`parser/title_type-pskel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-title_type-pskel.Tpo parser/$(DEPDIR)/libmarl_protocols_la-title_type-pskel.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/title_type-pskel.cpp' object='parser/libmarl_protocols_la-title_type-pskel.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-title_type-pskel.lo `test -f 'parser/title_type-pskel.cpp' || echo '$(srcdir)/'`parser/title_type-pskel.cpp
+
+parser/libmarl_protocols_la-id-parser.lo: parser/id-parser.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-id-parser.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-id-parser.Tpo -c -o parser/libmarl_protocols_la-id-parser.lo `test -f 'parser/id-parser.cpp' || echo '$(srcdir)/'`parser/id-parser.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-id-parser.Tpo parser/$(DEPDIR)/libmarl_protocols_la-id-parser.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/id-parser.cpp' object='parser/libmarl_protocols_la-id-parser.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-id-parser.lo `test -f 'parser/id-parser.cpp' || echo '$(srcdir)/'`parser/id-parser.cpp
+
+parser/libmarl_protocols_la-action-parser.lo: parser/action-parser.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-action-parser.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-action-parser.Tpo -c -o parser/libmarl_protocols_la-action-parser.lo `test -f 'parser/action-parser.cpp' || echo '$(srcdir)/'`parser/action-parser.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-action-parser.Tpo parser/$(DEPDIR)/libmarl_protocols_la-action-parser.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/action-parser.cpp' object='parser/libmarl_protocols_la-action-parser.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-action-parser.lo `test -f 'parser/action-parser.cpp' || echo '$(srcdir)/'`parser/action-parser.cpp
+
+parser/libmarl_protocols_la-action-pskel.lo: parser/action-pskel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-action-pskel.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-action-pskel.Tpo -c -o parser/libmarl_protocols_la-action-pskel.lo `test -f 'parser/action-pskel.cpp' || echo '$(srcdir)/'`parser/action-pskel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-action-pskel.Tpo parser/$(DEPDIR)/libmarl_protocols_la-action-pskel.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/action-pskel.cpp' object='parser/libmarl_protocols_la-action-pskel.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-action-pskel.lo `test -f 'parser/action-pskel.cpp' || echo '$(srcdir)/'`parser/action-pskel.cpp
+
+parser/libmarl_protocols_la-actions-parser.lo: parser/actions-parser.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-actions-parser.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-actions-parser.Tpo -c -o parser/libmarl_protocols_la-actions-parser.lo `test -f 'parser/actions-parser.cpp' || echo '$(srcdir)/'`parser/actions-parser.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-actions-parser.Tpo parser/$(DEPDIR)/libmarl_protocols_la-actions-parser.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/actions-parser.cpp' object='parser/libmarl_protocols_la-actions-parser.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-actions-parser.lo `test -f 'parser/actions-parser.cpp' || echo '$(srcdir)/'`parser/actions-parser.cpp
+
+parser/libmarl_protocols_la-actions-pskel.lo: parser/actions-pskel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parser/libmarl_protocols_la-actions-pskel.lo -MD -MP -MF parser/$(DEPDIR)/libmarl_protocols_la-actions-pskel.Tpo -c -o parser/libmarl_protocols_la-actions-pskel.lo `test -f 'parser/actions-pskel.cpp' || echo '$(srcdir)/'`parser/actions-pskel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) parser/$(DEPDIR)/libmarl_protocols_la-actions-pskel.Tpo parser/$(DEPDIR)/libmarl_protocols_la-actions-pskel.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser/actions-pskel.cpp' object='parser/libmarl_protocols_la-actions-pskel.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parser/libmarl_protocols_la-actions-pskel.lo `test -f 'parser/actions-pskel.cpp' || echo '$(srcdir)/'`parser/actions-pskel.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

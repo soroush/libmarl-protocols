@@ -21,16 +21,19 @@
 #ifndef LIBMARL_STATES_PARSER_HPP
 #define LIBMARL_STATES_PARSER_HPP
 
-#include "states_type-pskel.hpp"
+#include "states-pskel.hpp"
+#include "state-parser.hpp"
 #include <cstdint>
 
 namespace marl {
-class states_parser : public states_type_pskel {
+class states_parser : public states_pskel {
 public:
+	states_parser();
     void state(::marl::state*) override;
-    std::vector<marl::state*> post_states_type() override;
+    std::vector<marl::state*> post_states() override;
 private:
     std::vector<marl::state*> m_states;
+    marl::state_parser m_sparser;
 };
 }
 

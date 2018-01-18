@@ -38,45 +38,94 @@
 
 #include <xsd/cxx/pre.hxx>
 
-#include "states_type-pskel.hpp"
+#include "action-pskel.hpp"
 
-#include "state_type-pskel.hpp"
+#include "transition-pskel.hpp"
 
-// states_type_pskel
+#include "id_type-pskel.hpp"
+
+#include "title_type-pskel.hpp"
+
+#include "state_pointer_type-pskel.hpp"
+
+// action_pskel
 //
 
-void states_type_pskel::
-state_parser (::state_type_pskel& p)
+void action_pskel::
+transition_parser (::transition_pskel& p)
 {
-  this->state_parser_ = &p;
+  this->transition_parser_ = &p;
 }
 
-void states_type_pskel::
-parsers (::state_type_pskel& state)
+void action_pskel::
+id_parser (::id_type_pskel& p)
 {
-  this->state_parser_ = &state;
+  this->id_parser_ = &p;
 }
 
-states_type_pskel::
-states_type_pskel ()
-: state_parser_ (0),
-  v_state_stack_ (sizeof (v_state_), &v_state_first_)
+void action_pskel::
+title_parser (::title_type_pskel& p)
+{
+  this->title_parser_ = &p;
+}
+
+void action_pskel::
+from_parser (::state_pointer_type_pskel& p)
+{
+  this->from_parser_ = &p;
+}
+
+void action_pskel::
+parsers (::transition_pskel& transition,
+         ::id_type_pskel& id,
+         ::title_type_pskel& title,
+         ::state_pointer_type_pskel& from)
+{
+  this->transition_parser_ = &transition;
+  this->id_parser_ = &id;
+  this->title_parser_ = &title;
+  this->from_parser_ = &from;
+}
+
+action_pskel::
+action_pskel ()
+: transition_parser_ (0),
+  id_parser_ (0),
+  title_parser_ (0),
+  from_parser_ (0),
+  v_state_stack_ (sizeof (v_state_), &v_state_first_),
+  v_state_attr_stack_ (sizeof (v_state_attr_), &v_state_attr_first_)
 {
 }
 
-// states_type_pskel
+// action_pskel
 //
 
-void states_type_pskel::
-state (::marl::state*)
+void action_pskel::
+transition (marl::transition*)
+{
+}
+
+void action_pskel::
+id (uint32_t)
+{
+}
+
+void action_pskel::
+title (::std::string)
+{
+}
+
+void action_pskel::
+from (::marl::state*)
 {
 }
 
 #include <cassert>
 
-// Element validation and dispatch functions for states_type_pskel.
+// Element validation and dispatch functions for action_pskel.
 //
-bool states_type_pskel::
+bool action_pskel::
 _start_element_impl (const ::xml_schema::ro_string& ns,
                      const ::xml_schema::ro_string& n,
                      const ::xml_schema::ro_string* t)
@@ -112,7 +161,7 @@ _start_element_impl (const ::xml_schema::ro_string& ns,
     {
       unsigned long s = ~0UL;
 
-      if (n == "state" && ns.empty ())
+      if (n == "transition" && ns.empty ())
         s = 0UL;
 
       if (s != ~0UL)
@@ -121,7 +170,7 @@ _start_element_impl (const ::xml_schema::ro_string& ns,
         vd->state = ~0UL;
 
         vd = vs.data + vs.size++;
-        vd->func = &states_type_pskel::sequence_0;
+        vd->func = &action_pskel::sequence_0;
         vd->state = s;
         vd->count = 0;
 
@@ -131,7 +180,7 @@ _start_element_impl (const ::xml_schema::ro_string& ns,
       {
         if (vd->count < 1UL)
           this->_expected_element (
-            "", "state",
+            "", "transition",
             ns, n);
         return false;
       }
@@ -143,7 +192,7 @@ _start_element_impl (const ::xml_schema::ro_string& ns,
   return true;
 }
 
-bool states_type_pskel::
+bool action_pskel::
 _end_element_impl (const ::xml_schema::ro_string& ns,
                    const ::xml_schema::ro_string& n)
 {
@@ -166,7 +215,7 @@ _end_element_impl (const ::xml_schema::ro_string& ns,
   return true;
 }
 
-void states_type_pskel::
+void action_pskel::
 _pre_e_validate ()
 {
   this->v_state_stack_.push ();
@@ -180,7 +229,7 @@ _pre_e_validate ()
   vd.count = 0;
 }
 
-void states_type_pskel::
+void action_pskel::
 _post_e_validate ()
 {
   v_state_& vs = *static_cast< v_state_* > (this->v_state_stack_.top ());
@@ -196,12 +245,12 @@ _post_e_validate ()
 
   if (vd->count < 1UL)
     this->_expected_element (
-      "", "state");
+      "", "transition");
 
   this->v_state_stack_.pop ();
 }
 
-void states_type_pskel::
+void action_pskel::
 sequence_0 (unsigned long& state,
             unsigned long& count,
             const ::xml_schema::ro_string& ns,
@@ -215,20 +264,20 @@ sequence_0 (unsigned long& state,
   {
     case 0UL:
     {
-      if (n == "state" && ns.empty ())
+      if (n == "transition" && ns.empty ())
       {
         if (start)
         {
-          this->::xml_schema::complex_content::context_.top ().parser_ = this->state_parser_;
+          this->::xml_schema::complex_content::context_.top ().parser_ = this->transition_parser_;
 
-          if (this->state_parser_)
-            this->state_parser_->pre ();
+          if (this->transition_parser_)
+            this->transition_parser_->pre ();
         }
         else
         {
-          if (this->state_parser_)
+          if (this->transition_parser_)
           {
-            this->state (this->state_parser_->post_state_type ());
+            this->transition (this->transition_parser_->post_transition ());
           }
 
           count++;
@@ -241,7 +290,7 @@ sequence_0 (unsigned long& state,
         assert (start);
         if (count < 1UL)
           this->_expected_element (
-            "", "state",
+            "", "transition",
             ns, n);
         count = 0;
         state = ~0UL;
@@ -251,6 +300,90 @@ sequence_0 (unsigned long& state,
     case ~0UL:
       break;
   }
+}
+
+// Attribute validation and dispatch functions for action_pskel.
+//
+bool action_pskel::
+_attribute_impl_phase_one (const ::xml_schema::ro_string& ns,
+                           const ::xml_schema::ro_string& n,
+                           const ::xml_schema::ro_string& s)
+{
+  if (n == "id" && ns.empty ())
+  {
+    if (this->id_parser_)
+    {
+      this->id_parser_->pre ();
+      this->id_parser_->_pre_impl ();
+      this->id_parser_->_characters (s);
+      this->id_parser_->_post_impl ();
+      this->id (this->id_parser_->post_id_type ());
+    }
+
+    static_cast< v_state_attr_* > (this->v_state_attr_stack_.top ())->id = true;
+    return true;
+  }
+
+  if (n == "title" && ns.empty ())
+  {
+    if (this->title_parser_)
+    {
+      this->title_parser_->pre ();
+      this->title_parser_->_pre_impl ();
+      this->title_parser_->_characters (s);
+      this->title_parser_->_post_impl ();
+      this->title (this->title_parser_->post_title_type ());
+    }
+
+    static_cast< v_state_attr_* > (this->v_state_attr_stack_.top ())->title = true;
+    return true;
+  }
+
+  if (n == "from" && ns.empty ())
+  {
+    if (this->from_parser_)
+    {
+      this->from_parser_->pre ();
+      this->from_parser_->_pre_impl ();
+      this->from_parser_->_characters (s);
+      this->from_parser_->_post_impl ();
+      this->from (this->from_parser_->post_state_pointer_type ());
+    }
+
+    static_cast< v_state_attr_* > (this->v_state_attr_stack_.top ())->from = true;
+    return true;
+  }
+
+  return false;
+}
+
+void action_pskel::
+_pre_a_validate ()
+{
+  this->v_state_attr_stack_.push ();
+  v_state_attr_& as = *static_cast< v_state_attr_* > (this->v_state_attr_stack_.top ());
+
+  as.id = false;
+  as.title = false;
+  as.from = false;
+}
+
+void action_pskel::
+_post_a_validate ()
+{
+  v_state_attr_& as = *static_cast< v_state_attr_* > (this->v_state_attr_stack_.top ());
+
+  if (!as.id)
+    this->_expected_attribute (
+      "", "id");
+  if (!as.title)
+    this->_expected_attribute (
+      "", "title");
+  if (!as.from)
+    this->_expected_attribute (
+      "", "from");
+
+  this->v_state_attr_stack_.pop ();
 }
 
 #include <xsd/cxx/post.hxx>

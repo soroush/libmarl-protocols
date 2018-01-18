@@ -38,45 +38,45 @@
 
 #include <xsd/cxx/pre.hxx>
 
-#include "actions_type-pskel.hpp"
+#include "actions-pskel.hpp"
 
-#include "action_type-pskel.hpp"
+#include "action-pskel.hpp"
 
-// actions_type_pskel
+// actions_pskel
 //
 
-void actions_type_pskel::
-action_parser (::action_type_pskel& p)
+void actions_pskel::
+action_parser (::action_pskel& p)
 {
   this->action_parser_ = &p;
 }
 
-void actions_type_pskel::
-parsers (::action_type_pskel& action)
+void actions_pskel::
+parsers (::action_pskel& action)
 {
   this->action_parser_ = &action;
 }
 
-actions_type_pskel::
-actions_type_pskel ()
+actions_pskel::
+actions_pskel ()
 : action_parser_ (0),
   v_state_stack_ (sizeof (v_state_), &v_state_first_)
 {
 }
 
-// actions_type_pskel
+// actions_pskel
 //
 
-void actions_type_pskel::
+void actions_pskel::
 action (::marl::action*)
 {
 }
 
 #include <cassert>
 
-// Element validation and dispatch functions for actions_type_pskel.
+// Element validation and dispatch functions for actions_pskel.
 //
-bool actions_type_pskel::
+bool actions_pskel::
 _start_element_impl (const ::xml_schema::ro_string& ns,
                      const ::xml_schema::ro_string& n,
                      const ::xml_schema::ro_string* t)
@@ -121,7 +121,7 @@ _start_element_impl (const ::xml_schema::ro_string& ns,
         vd->state = ~0UL;
 
         vd = vs.data + vs.size++;
-        vd->func = &actions_type_pskel::sequence_0;
+        vd->func = &actions_pskel::sequence_0;
         vd->state = s;
         vd->count = 0;
 
@@ -143,7 +143,7 @@ _start_element_impl (const ::xml_schema::ro_string& ns,
   return true;
 }
 
-bool actions_type_pskel::
+bool actions_pskel::
 _end_element_impl (const ::xml_schema::ro_string& ns,
                    const ::xml_schema::ro_string& n)
 {
@@ -166,7 +166,7 @@ _end_element_impl (const ::xml_schema::ro_string& ns,
   return true;
 }
 
-void actions_type_pskel::
+void actions_pskel::
 _pre_e_validate ()
 {
   this->v_state_stack_.push ();
@@ -180,7 +180,7 @@ _pre_e_validate ()
   vd.count = 0;
 }
 
-void actions_type_pskel::
+void actions_pskel::
 _post_e_validate ()
 {
   v_state_& vs = *static_cast< v_state_* > (this->v_state_stack_.top ());
@@ -201,7 +201,7 @@ _post_e_validate ()
   this->v_state_stack_.pop ();
 }
 
-void actions_type_pskel::
+void actions_pskel::
 sequence_0 (unsigned long& state,
             unsigned long& count,
             const ::xml_schema::ro_string& ns,
@@ -228,7 +228,7 @@ sequence_0 (unsigned long& state,
         {
           if (this->action_parser_)
           {
-            this->action (this->action_parser_->post_action_type ());
+            this->action (this->action_parser_->post_action ());
           }
 
           count++;
