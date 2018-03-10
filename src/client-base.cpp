@@ -61,10 +61,15 @@ void marl::client_base::responser_worker() {
         if(!m_request_sem.wait_for(std::chrono::milliseconds{100})) {
             continue;
         }
-        std::lock_guard<std::mutex> lck{m_request_lock};
+        std::unique_lock<std::mutex> req_lck{m_request_lock};
         request_base* req = m_requests.front();
         m_requests.pop_front();
+        req_lck.unlock();
         response_base* rsp = process_request(req);
+        std::unique_lock<std::mutex> rsp_lck{m_response_lock};
+        m_responses.push_back(rsp);
+        rsp_lck.unlock();
+        m_request_sem.notify();
         delete req;
     }
 }

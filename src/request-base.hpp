@@ -32,7 +32,7 @@ const uint8_t MARL_UPDATE_TABLE_REQ = 1;
 
 struct LIBMARL_API request_base : public message_base {
     request_base() = default;
-    virtual ~request_base() {}
+    virtual ~request_base() = default;
     virtual uint8_t type() const = 0;
     uint32_t state_id;
 };
