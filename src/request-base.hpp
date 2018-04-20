@@ -28,12 +28,12 @@
 namespace marl {
 
 const uint8_t MARL_ACTION_SELECT_REQ = 0;
-const uint8_t MARL_UPDATE_TABLE_REQ = 1;
+const uint8_t MARL_UPDATE_TABLE_REQ = 2;
 
 struct LIBMARL_API request_base : public message_base {
     request_base() = default;
+    request_base(const request_base&) = default;
     virtual ~request_base() = default;
-    virtual uint8_t type() const = 0;
     uint32_t state_id;
 };
 

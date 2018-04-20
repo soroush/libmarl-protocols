@@ -29,6 +29,8 @@
 namespace marl {
 
 struct LIBMARL_API action_info {
+    action_info() = default;
+    action_info(const action_info&) = default;
     uint32_t action;
     uint32_t state;
     float q_value;
@@ -36,8 +38,11 @@ struct LIBMARL_API action_info {
 };
 
 struct LIBMARL_API action_select_rsp : public response_base {
+    action_select_rsp() = default;
+    action_select_rsp(const action_select_rsp&) = default;
     std::vector<action_info> info;
-    uint8_t type() const;
+    uint8_t type() const override;
+    message_base* clone() const override;
 };
 
 }

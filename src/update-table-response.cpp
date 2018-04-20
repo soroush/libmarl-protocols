@@ -20,7 +20,10 @@
 
 #include "update-table-response.hpp"
 
-uint8_t marl::update_table_rsp::type() const
-{
+uint8_t marl::update_table_rsp::type() const {
     return MARL_UPDATE_TABLE_RSP;
+}
+
+marl::message_base* marl::update_table_rsp::clone() const {
+    return new update_table_rsp{*this};
 }

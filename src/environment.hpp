@@ -32,6 +32,7 @@ class action;
 class environment {
 public:
     environment() = default;
+    environment(const environment&) = default;
     void set_title(const std::string& title);
     void set_description(const std::string& description);
     void set_states(const std::vector<marl::state*>&);

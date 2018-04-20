@@ -28,9 +28,11 @@ namespace marl {
 
 struct LIBMARL_API update_table_rsp : public response_base {
     update_table_rsp() = default;
+    update_table_rsp(const update_table_rsp&) = default;
     ~update_table_rsp() = default;
     float max_q;
     uint8_t type() const override;
+    message_base* clone() const override;
 };
 
 }

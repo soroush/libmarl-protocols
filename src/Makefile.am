@@ -37,18 +37,24 @@ libmarl_protocols_la_LIBADD = \
 libmarl_protocols_la_LDFLAGS = -version-info $(LIBMARL_SO_VERSION)
 libmarl_protocols_la_LDFLAGS += -fvisibility=hidden
 
-libmarl_protocols_includedir = $(includedir)/libmarl-protocols
+libmarl_protocols_includedir = $(includedir)/marl-protocols
 nobase_libmarl_protocols_include_HEADERS =  \
     libmarl-exports.hpp \
     details/named-object.hpp \
     semaphore.hpp \
     message-base.hpp \
+    message-base-impl.hpp \
     client-base.hpp \
     request-base.hpp \
+    request-base-impl.hpp \
     action-select-request.hpp \
+    action-select-request-impl.hpp \
     action-select-response.hpp \
+    action-select-response-impl.hpp \
     update-table-request.hpp \
+    update-table-request-impl.hpp \
     update-table-response.hpp \
+    update-table-response-impl.hpp \
     response-base.hpp \
     state.hpp \
     transition.hpp \
@@ -59,18 +65,12 @@ libmarl_protocols_la_SOURCES = \
     details/named-object.cpp \
     semaphore.cpp \
     message-base.cpp \
-    message-base-impl.hpp \
     client-base.cpp \
     request-base.cpp \
-    request-base-impl.hpp \
     action-select-request.cpp \
-    action-select-request-impl.hpp \
     action-select-response.cpp \
-    action-select-response-impl.hpp \
     update-table-request.cpp \
-    update-table-request-impl.hpp \
     update-table-response.cpp \
-    update-table-response-impl.hpp \
     response-base.cpp \
     response-base-impl.hpp \
     state.cpp \

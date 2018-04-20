@@ -27,11 +27,12 @@
 
 namespace marl {
 
-const uint8_t MARL_ACTION_SELECT_RSP = 0;
-const uint8_t MARL_UPDATE_TABLE_RSP = 1;
+const uint8_t MARL_ACTION_SELECT_RSP = 1;
+const uint8_t MARL_UPDATE_TABLE_RSP = 3;
 
 struct LIBMARL_API response_base : public message_base {
     response_base() = default;
+    response_base(const response_base&) = default;
     virtual ~response_base() = default;
 };
 

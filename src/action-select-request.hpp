@@ -28,7 +28,10 @@
 namespace marl {
 
 struct LIBMARL_API action_select_req : public request_base {
-    uint8_t type() const;
+    action_select_req() = default;
+    action_select_req(const action_select_req&) = default;
+    uint8_t type() const override;
+    message_base* clone() const override;
 };
 
 }

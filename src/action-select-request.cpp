@@ -20,7 +20,10 @@
 
 #include "action-select-request.hpp"
 
-uint8_t marl::action_select_req::type() const
-{
+uint8_t marl::action_select_req::type() const {
     return MARL_ACTION_SELECT_REQ;
+}
+
+marl::message_base* marl::action_select_req::clone() const {
+    return new action_select_req{*this};
 }

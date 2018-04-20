@@ -20,7 +20,10 @@
 
 #include "action-select-response.hpp"
 
-uint8_t marl::action_select_rsp::type() const
-{
+uint8_t marl::action_select_rsp::type() const {
     return MARL_ACTION_SELECT_RSP;
+}
+
+marl::message_base* marl::action_select_rsp::clone() const {
+    return new action_select_rsp{*this};
 }

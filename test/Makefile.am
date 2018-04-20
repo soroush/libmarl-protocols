@@ -1,5 +1,5 @@
-# Copyright 2017 - Roya Ghasemzade <roya@ametisco.ir>
-# Copyright 2017 - Soroush Rabiei <soroush@ametisco.ir>
+# Copyright 2017, 2018 - Roya Ghasemzade <roya@ametisco.ir>
+# Copyright 2017, 2018 - Soroush Rabiei <soroush@ametisco.ir>
 #
 # This file is part of libmarl_protocols.
 #
@@ -27,13 +27,20 @@ AM_CXXFLAGS = --pedantic -Wall -Werror
 
 check_PROGRAMS = \
     tst_serialize \
-    tst_parser
+    tst_parser \
+    tst_agent
 
 tst_serialize_SOURCES = \
     tst-serialize.cpp
 
 tst_parser_SOURCES = \
     tst-parser.cpp
+
+tst_server_SOURCES = \
+    tst-server.cpp
+
+tst_agent_SOURCES = \
+    tst-agent.cpp
 
 LDADD = \
     ../src/libmarl_protocols.la \

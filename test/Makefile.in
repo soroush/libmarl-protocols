@@ -14,8 +14,8 @@
 
 @SET_MAKE@
 
-# Copyright 2017 - Roya Ghasemzade <roya@ametisco.ir>
-# Copyright 2017 - Soroush Rabiei <soroush@ametisco.ir>
+# Copyright 2017, 2018 - Roya Ghasemzade <roya@ametisco.ir>
+# Copyright 2017, 2018 - Soroush Rabiei <soroush@ametisco.ir>
 #
 # This file is part of libmarl_protocols.
 #
@@ -105,7 +105,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-check_PROGRAMS = tst_serialize$(EXEEXT) tst_parser$(EXEEXT)
+check_PROGRAMS = tst_serialize$(EXEEXT) tst_parser$(EXEEXT) \
+	tst_agent$(EXEEXT)
 subdir = test
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_cxx_compile_stdcxx.m4 \
@@ -121,16 +122,21 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am_tst_parser_OBJECTS = tst-parser.$(OBJEXT)
-tst_parser_OBJECTS = $(am_tst_parser_OBJECTS)
-tst_parser_LDADD = $(LDADD)
+am_tst_agent_OBJECTS = tst-agent.$(OBJEXT)
+tst_agent_OBJECTS = $(am_tst_agent_OBJECTS)
+tst_agent_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
-tst_parser_DEPENDENCIES = ../src/libmarl_protocols.la \
+tst_agent_DEPENDENCIES = ../src/libmarl_protocols.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+am_tst_parser_OBJECTS = tst-parser.$(OBJEXT)
+tst_parser_OBJECTS = $(am_tst_parser_OBJECTS)
+tst_parser_LDADD = $(LDADD)
+tst_parser_DEPENDENCIES = ../src/libmarl_protocols.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_tst_serialize_OBJECTS = tst-serialize.$(OBJEXT)
 tst_serialize_OBJECTS = $(am_tst_serialize_OBJECTS)
 tst_serialize_LDADD = $(LDADD)
@@ -170,8 +176,10 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(tst_parser_SOURCES) $(tst_serialize_SOURCES)
-DIST_SOURCES = $(tst_parser_SOURCES) $(tst_serialize_SOURCES)
+SOURCES = $(tst_agent_SOURCES) $(tst_parser_SOURCES) \
+	$(tst_serialize_SOURCES)
+DIST_SOURCES = $(tst_agent_SOURCES) $(tst_parser_SOURCES) \
+	$(tst_serialize_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -552,6 +560,12 @@ tst_serialize_SOURCES = \
 tst_parser_SOURCES = \
     tst-parser.cpp
 
+tst_server_SOURCES = \
+    tst-server.cpp
+
+tst_agent_SOURCES = \
+    tst-agent.cpp
+
 LDADD = \
     ../src/libmarl_protocols.la \
     $(CPNET_LIBS) \
@@ -601,6 +615,10 @@ clean-checkPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
+tst_agent$(EXEEXT): $(tst_agent_OBJECTS) $(tst_agent_DEPENDENCIES) $(EXTRA_tst_agent_DEPENDENCIES) 
+	@rm -f tst_agent$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(tst_agent_OBJECTS) $(tst_agent_LDADD) $(LIBS)
+
 tst_parser$(EXEEXT): $(tst_parser_OBJECTS) $(tst_parser_DEPENDENCIES) $(EXTRA_tst_parser_DEPENDENCIES) 
 	@rm -f tst_parser$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(tst_parser_OBJECTS) $(tst_parser_LDADD) $(LIBS)
@@ -615,6 +633,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tst-agent.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tst-parser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tst-serialize.Po@am__quote@
 
@@ -851,6 +870,13 @@ tst_serialize.log: tst_serialize$(EXEEXT)
 tst_parser.log: tst_parser$(EXEEXT)
 	@p='tst_parser$(EXEEXT)'; \
 	b='tst_parser'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tst_agent.log: tst_agent$(EXEEXT)
+	@p='tst_agent$(EXEEXT)'; \
+	b='tst_agent'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

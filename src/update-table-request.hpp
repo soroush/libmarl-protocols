@@ -30,6 +30,7 @@ struct LIBMARL_API update_table_req : public request_base {
     update_table_req() = default;
     ~update_table_req() = default;
     uint8_t type() const override;
+    message_base* clone() const override;
 };
 
 }

@@ -28,11 +28,13 @@ namespace marl {
 
 struct LIBMARL_API message_base {
     message_base() = default;
+    message_base(const message_base&) = default;
     virtual ~message_base() = default;
     uint32_t agent_id;
     float confidence;
     uint32_t request_number;
     virtual uint8_t type() const = 0;
+    virtual message_base* clone() const = 0;
 };
 
 }

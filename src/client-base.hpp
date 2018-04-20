@@ -29,6 +29,7 @@
 #include <thread>
 #include <atomic>
 #include <cpnet/cpnet-network.h>
+#include "environment.hpp"
 #include "semaphore.hpp"
 #include "message-base.hpp"
 #include "request-base.hpp"
@@ -45,23 +46,32 @@ public:
     void send_message(const message_base* const);
     response_base* get_response(uint32_t request_id);
     void start();
+    void wait();
     void stop();
+    void set_id(uint32_t id);
+    uint32_t id() const;
+    // Environment
+    bool initialize(const std::string& path, uint32_t start = 0);
 protected:
     virtual response_base* process_request(const request_base* const) = 0;
+    uint32_t m_id;
 private:
+    void response_worker();
     void receiver_worker();
-    void responser_worker();
-    tidm::semaphore m_request_sem;
-    tidm::semaphore m_response_sem;
+    tidm::semaphore m_requests_sem;
+    tidm::semaphore m_responses_sem;
     std::mutex m_request_lock;
     std::mutex m_response_lock;
-    std::mutex m_transmit_lock;
-    std::thread m_responser;
+    std::thread m_sender;
     std::thread m_receiver;
+    // Module
     std::atomic_bool m_is_running;
     socket_t m_socket;
+    // Incomming message queues
     std::list<request_base*> m_requests;
     std::list<response_base*> m_responses;
+    // Envirinment
+    environment m_env;
 };
 
 }
