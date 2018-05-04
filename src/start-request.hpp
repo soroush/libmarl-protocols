@@ -18,26 +18,23 @@
  * along with libmarl_protocols.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MARL_REQUEST_BASE_HPP
-#define MARL_REQUEST_BASE_HPP
+#ifndef MARL_START_REQUEST_HPP
+#define MARL_START_REQUEST_HPP
 
 #include <cstdint>
-#include "message-base.hpp"
-#include "libmarl-exports.hpp"
+#include "request-base.hpp"
 
 namespace marl {
 
-const uint8_t MARL_ACTION_SELECT_REQ = 0;
-const uint8_t MARL_UPDATE_TABLE_REQ = 2;
-const uint8_t MARL_START_REQ = 3;
-
-struct LIBMARL_API request_base : public message_base {
-    request_base() = default;
-    request_base(const request_base&) = default;
-    virtual ~request_base() = default;
-    uint32_t state_id;
+struct LIBMARL_API start_req : public request_base {
+    start_req() = default;
+    start_req(const start_req&) = default;
+    ~start_req() = default;
+    uint8_t type() const override;
+    message_base* clone() const override;
+    uint32_t agent_count;
 };
 
 }
 
-#endif // MARL_REQUEST_BASE_HPP
+#endif // MARL_START_REQUEST_HPP

@@ -53,8 +53,13 @@ public:
     // Environment
     bool initialize(const std::string& path, uint32_t start = 0);
 protected:
+    virtual void run() = 0;
     virtual response_base* process_request(const request_base* const) = 0;
     uint32_t m_id;
+    // Module
+    std::atomic_bool m_is_running;
+    // Envirinment
+    environment m_env;
 private:
     void response_worker();
     void receiver_worker();
@@ -64,14 +69,11 @@ private:
     std::mutex m_response_lock;
     std::thread m_sender;
     std::thread m_receiver;
-    // Module
-    std::atomic_bool m_is_running;
+    std::thread m_main_loop;
     socket_t m_socket;
     // Incomming message queues
     std::list<request_base*> m_requests;
     std::list<response_base*> m_responses;
-    // Envirinment
-    environment m_env;
 };
 
 }

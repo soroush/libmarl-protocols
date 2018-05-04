@@ -18,26 +18,24 @@
  * along with libmarl_protocols.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MARL_REQUEST_BASE_HPP
-#define MARL_REQUEST_BASE_HPP
+#ifndef MARL_START_REQUEST_IMPL_HPP
+#define MARL_START_REQUEST_IMPL_HPP
 
-#include <cstdint>
-#include "message-base.hpp"
-#include "libmarl-exports.hpp"
+#include <cereal/types/common.hpp>
+#include <cereal/types/polymorphic.hpp>
 
-namespace marl {
+#include "start-request.hpp"
+#include "request-base-impl.hpp"
 
-const uint8_t MARL_ACTION_SELECT_REQ = 0;
-const uint8_t MARL_UPDATE_TABLE_REQ = 2;
-const uint8_t MARL_START_REQ = 3;
-
-struct LIBMARL_API request_base : public message_base {
-    request_base() = default;
-    request_base(const request_base&) = default;
-    virtual ~request_base() = default;
-    uint32_t state_id;
-};
-
+namespace cereal {
+template<class Archive>
+void serialize(Archive& archive, marl::start_req& m) {
+    archive(cereal::base_class<marl::request_base>(&m),
+            m.agent_count);
+}
 }
 
-#endif // MARL_REQUEST_BASE_HPP
+CEREAL_REGISTER_TYPE(marl::start_req)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(marl::request_base, marl::start_req)
+
+#endif // MARL_START_REQUEST_IMPL_HPP

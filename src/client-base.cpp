@@ -22,12 +22,14 @@
 #include <flog/flog.hpp>
 #include <chrono>
 #include <sstream>
-#include <cereal/archives/binary.hpp>
 #include "update-table-request-impl.hpp"
 #include "update-table-response-impl.hpp"
 #include "action-select-request-impl.hpp"
 #include "action-select-response-impl.hpp"
+#include "start-request-impl.hpp"
 #include "parser/environment-parser.hpp"
+
+#include <cereal/archives/binary.hpp>
 
 #define DBUFSIZE 8192
 #define HEADSIZE (sizeof(uint32_t))
@@ -81,13 +83,68 @@ void marl::client_base::send_message(const marl::message_base* const msg) {
 
 void marl::client_base::start() {
     m_is_running.store(true);
+    flog::logger* l = flog::logger::instance();
+    char data_buffer[DBUFSIZE];
+    char header_buffer[HEADSIZE];
+    l->log(level::INFO, "Waiting for start signal from server...");
+    std::stringstream istr;
+    ssize_t read_size = cpnet_read2(m_socket, header_buffer,
+                                    HEADSIZE, MSG_WAITALL);
+    if(read_size != HEADSIZE) {
+        l->log(level::ERROR_,
+               "Unable to read header from incomming connection. Error: %s",
+               cpnet_last_error());
+        stop();
+        return;
+    }
+    uint32_t expected_size = 0;
+    memcpy(&expected_size, header_buffer, HEADSIZE);
+    expected_size = ntohl(expected_size);
+    l->log(level::TRACE, "Expected buffer size is: %d", expected_size);
+    read_size = cpnet_read2(m_socket, data_buffer,
+                            expected_size, MSG_WAITALL);
+    if(read_size <= 0) {
+        l->log(level::ERROR_,
+               "Unable to read data from socket. Error: %s",
+               cpnet_last_error());
+        stop();
+        return;
+    }
+    if(expected_size != read_size) {
+        l->log(level::ERROR_,
+               "Expected incomming buffer size was %d, bytes only %d received.",
+               expected_size, read_size);
+        stop();
+        return;
+    }
+    istr.write(data_buffer, read_size);
+    // Process incomming message: construct buffers
+    start_req msg;
+    try {
+        cereal::BinaryInputArchive archiver(istr);
+        archiver(msg);
+    } catch(cereal::Exception& e) {
+        l->log(level::ERROR_,
+               "Unable to deserialize buffer into `message_base' object.");
+        l->logc(level::ERROR_, "Error: %s", e.what());
+    }
+    l->log(level::INFO, "Received start command from server.");
+    l->logc(level::INFO, "Reported agent count is : %d", msg.agent_count);
     m_sender = std::thread{&client_base::response_worker, this};
     m_receiver = std::thread{&client_base::receiver_worker, this};
+    m_main_loop = std::thread{&client_base::run, this};
 }
 
 void marl::client_base::wait() {
-    m_sender.join();
-    m_receiver.join();
+    if(m_main_loop.joinable()) {
+        m_main_loop.join();
+    }
+    if(m_sender.joinable()) {
+        m_sender.join();
+    }
+    if(m_receiver.joinable()) {
+        m_receiver.join();
+    }
 }
 
 void marl::client_base::stop() {
@@ -162,7 +219,8 @@ void marl::client_base::receiver_worker() {
             l->log(level::ERROR_,
                    "Unable to read header from incomming connection. Error: %s",
                    cpnet_last_error());
-            continue;
+            stop();
+            break;
         }
         uint32_t expected_size = 0;
         memcpy(&expected_size, header_buffer, HEADSIZE);
@@ -175,6 +233,7 @@ void marl::client_base::receiver_worker() {
                 l->log(level::ERROR_,
                        "Unable to read data from incomming connection. Error: %s",
                        cpnet_last_error());
+                stop();
                 break;
             }
             total_read += read_size;
@@ -182,9 +241,10 @@ void marl::client_base::receiver_worker() {
         }
         if(expected_size != total_read) {
             l->log(level::ERROR_,
-                   "Expected incomming buffer size was %z, bytes only %z received.",
+                   "Expected incomming buffer size was %d, bytes only %d received.",
                    expected_size, total_read);
-            continue;
+            stop();
+            break;
         }
         l->log(level::TRACE, "Incomming message...");
         // Process incomming message: construct buffers

@@ -51,6 +51,8 @@ nobase_libmarl_protocols_include_HEADERS =  \
     action-select-request-impl.hpp \
     action-select-response.hpp \
     action-select-response-impl.hpp \
+    start-request.hpp \
+    start-request-impl.hpp \
     update-table-request.hpp \
     update-table-request-impl.hpp \
     update-table-response.hpp \
@@ -69,6 +71,7 @@ libmarl_protocols_la_SOURCES = \
     request-base.cpp \
     action-select-request.cpp \
     action-select-response.cpp \
+    start-request.cpp \
     update-table-request.cpp \
     update-table-response.cpp \
     response-base.cpp \

@@ -165,6 +165,7 @@ am_libmarl_protocols_la_OBJECTS =  \
 	libmarl_protocols_la-request-base.lo \
 	libmarl_protocols_la-action-select-request.lo \
 	libmarl_protocols_la-action-select-response.lo \
+	libmarl_protocols_la-start-request.lo \
 	libmarl_protocols_la-update-table-request.lo \
 	libmarl_protocols_la-update-table-response.lo \
 	libmarl_protocols_la-response-base.lo \
@@ -442,7 +443,8 @@ nobase_libmarl_protocols_include_HEADERS = libmarl-exports.hpp \
 	message-base-impl.hpp client-base.hpp request-base.hpp \
 	request-base-impl.hpp action-select-request.hpp \
 	action-select-request-impl.hpp action-select-response.hpp \
-	action-select-response-impl.hpp update-table-request.hpp \
+	action-select-response-impl.hpp start-request.hpp \
+	start-request-impl.hpp update-table-request.hpp \
 	update-table-request-impl.hpp update-table-response.hpp \
 	update-table-response-impl.hpp response-base.hpp state.hpp \
 	transition.hpp action.hpp environment.hpp parser/mdp-pskel.hpp \
@@ -461,9 +463,10 @@ nobase_libmarl_protocols_include_HEADERS = libmarl-exports.hpp \
 libmarl_protocols_la_SOURCES = details/named-object.cpp semaphore.cpp \
 	message-base.cpp client-base.cpp request-base.cpp \
 	action-select-request.cpp action-select-response.cpp \
-	update-table-request.cpp update-table-response.cpp \
-	response-base.cpp response-base-impl.hpp state.cpp \
-	transition.cpp action.cpp environment.cpp parser/mdp-pskel.cpp \
+	start-request.cpp update-table-request.cpp \
+	update-table-response.cpp response-base.cpp \
+	response-base-impl.hpp state.cpp transition.cpp action.cpp \
+	environment.cpp parser/mdp-pskel.cpp \
 	parser/environment-pskel.cpp parser/environment-parser.cpp \
 	parser/state-pskel.cpp parser/state-parser.cpp \
 	parser/states-pskel.cpp parser/states-parser.cpp \
@@ -623,6 +626,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmarl_protocols_la-request-base.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmarl_protocols_la-response-base.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmarl_protocols_la-semaphore.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmarl_protocols_la-start-request.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmarl_protocols_la-state.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmarl_protocols_la-transition.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmarl_protocols_la-update-table-request.Plo@am__quote@
@@ -722,6 +726,13 @@ libmarl_protocols_la-action-select-response.lo: action-select-response.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='action-select-response.cpp' object='libmarl_protocols_la-action-select-response.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmarl_protocols_la-action-select-response.lo `test -f 'action-select-response.cpp' || echo '$(srcdir)/'`action-select-response.cpp
+
+libmarl_protocols_la-start-request.lo: start-request.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libmarl_protocols_la-start-request.lo -MD -MP -MF $(DEPDIR)/libmarl_protocols_la-start-request.Tpo -c -o libmarl_protocols_la-start-request.lo `test -f 'start-request.cpp' || echo '$(srcdir)/'`start-request.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmarl_protocols_la-start-request.Tpo $(DEPDIR)/libmarl_protocols_la-start-request.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='start-request.cpp' object='libmarl_protocols_la-start-request.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmarl_protocols_la-start-request.lo `test -f 'start-request.cpp' || echo '$(srcdir)/'`start-request.cpp
 
 libmarl_protocols_la-update-table-request.lo: update-table-request.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmarl_protocols_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libmarl_protocols_la-update-table-request.lo -MD -MP -MF $(DEPDIR)/libmarl_protocols_la-update-table-request.Tpo -c -o libmarl_protocols_la-update-table-request.lo `test -f 'update-table-request.cpp' || echo '$(srcdir)/'`update-table-request.cpp

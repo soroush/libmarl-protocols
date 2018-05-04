@@ -26,10 +26,13 @@
 #include "../src/action-select-request-impl.hpp"
 #include "../src/action-select-response.hpp"
 #include "../src/action-select-response-impl.hpp"
+#include "../src/start-request.hpp"
+#include "../src/start-request-impl.hpp"
 #include <cereal/archives/binary.hpp>
 #include <sstream>
 #include <random>
 #include <limits>
+#include <cassert>
 #include <iostream>
 
 int main() {
@@ -41,7 +44,7 @@ int main() {
     std::uniform_real_distribution<float> uniform_rdist(
         std::numeric_limits<float>::min(),
         std::numeric_limits<float>::max());
-    const size_t test_size = 1.0e+05;
+    const size_t test_size = 1.0e+02;
     for(size_t i = 0; i < test_size; ++i) {
         std::stringstream str_out;
         cereal::BinaryOutputArchive ar_out(str_out);
@@ -56,12 +59,10 @@ int main() {
         str_in.str(str_out.str());
         marl::update_table_req req2;
         ar_in(req2);
-        if(req1.state_id != req2.state_id ||
-                req1.agent_id != req2.agent_id ||
-                req1.confidence != req2.confidence ||
-                req1.request_number != req2.request_number) {
-            return 99;
-        }
+        assert(req1.state_id == req2.state_id &&
+               req1.agent_id == req2.agent_id &&
+               req1.confidence == req2.confidence &&
+               req1.request_number == req2.request_number);
     }
     for(size_t i = 0; i < test_size; ++i) {
         std::stringstream str_out;
@@ -77,12 +78,10 @@ int main() {
         str_in.str(str_out.str());
         marl::update_table_rsp rsp2;
         ar_in(rsp2);
-        if(rsp1.max_q != rsp2.max_q ||
-                rsp1.agent_id != rsp2.agent_id ||
-                rsp1.confidence != rsp2.confidence ||
-                rsp1.request_number != rsp2.request_number) {
-            return 99;
-        }
+        assert(rsp1.max_q == rsp2.max_q &&
+               rsp1.agent_id == rsp2.agent_id &&
+               rsp1.confidence == rsp2.confidence &&
+               rsp1.request_number == rsp2.request_number);
     }
 
     for(size_t i = 0; i < test_size; ++i) {
@@ -99,12 +98,10 @@ int main() {
         str_in.str(str_out.str());
         marl::action_select_req req2;
         ar_in(req2);
-        if(req1.state_id != req2.state_id ||
-                req1.agent_id != req2.agent_id ||
-                req1.confidence != req2.confidence ||
-                req1.request_number != req2.request_number) {
-            return 99;
-        }
+        assert(req1.state_id == req2.state_id &&
+               req1.agent_id == req2.agent_id &&
+               req1.confidence == req2.confidence &&
+               req1.request_number == req2.request_number);
     }
     for(size_t i = 0; i < test_size; ++i) {
         std::stringstream str_out;
@@ -128,31 +125,40 @@ int main() {
         str_in.str(str_out.str());
         marl::action_select_rsp rsp2;
         ar_in(rsp2);
-        if(rsp1.agent_id != rsp2.agent_id ||
-                rsp1.confidence != rsp2.confidence ||
-                rsp1.request_number != rsp2.request_number) {
-            std::cerr << "Response base information differ!\n";
-            std::cerr << "Expected:"
-                      << rsp1.agent_id << ' '
-                      << rsp1.confidence << ' '
-                      << rsp1.request_number << '\n' ;
-            std::cerr << "  Actual:"
-                      << rsp2.agent_id << ' '
-                      << rsp2.confidence << ' '
-                      << rsp2.request_number << '\n' ;
-            return 99;
-        }
-        if(rsp1.info.size() != rsp2.info.size()) {
-            return 99;
-        }
+        assert(rsp1.agent_id == rsp2.agent_id &&
+               rsp1.confidence == rsp2.confidence &&
+               rsp1.request_number == rsp2.request_number);
+        assert(rsp1.info.size() == rsp2.info.size());
         for(size_t i = 0; i < rsp1.info.size(); ++i) {
-            if(rsp1.info.at(i).action != rsp2.info.at(i).action ||
-                    rsp1.info.at(i).state != rsp2.info.at(i).state ||
-                    rsp1.info.at(i).q_value != rsp2.info.at(i).q_value ||
-                    rsp1.info.at(i).confidence != rsp2.info.at(i).confidence) {
-                return 99;
-            }
+            assert(rsp1.info.at(i).action == rsp2.info.at(i).action &&
+                   rsp1.info.at(i).state == rsp2.info.at(i).state &&
+                   rsp1.info.at(i).q_value == rsp2.info.at(i).q_value &&
+                   rsp1.info.at(i).confidence == rsp2.info.at(i).confidence);
         }
+    }
+    // Start Request
+    for(size_t i = 0; i < test_size; ++i) {
+        std::stringstream str_out;
+        cereal::BinaryOutputArchive ar_out(str_out);
+        std::stringstream str_in;
+        cereal::BinaryInputArchive ar_in(str_in);
+        marl::start_req req1;
+        req1.agent_id = uniform_dist(e1);
+        req1.agent_count = uniform_dist(e1);
+        req1.confidence = uniform_rdist(e1);
+        req1.request_number = uniform_dist(e1);
+        req1.state_id = uniform_dist(e1);
+        ar_out(req1);
+        std::string x = str_out.str();
+        std::cerr << x.size() << std::endl;
+        str_in.str(x);
+        marl::start_req req2;
+        ar_in(req2);
+        assert(req1.state_id == req2.state_id &&
+               req1.agent_count == req2.agent_count &&
+               req1.agent_id == req2.agent_id &&
+               req1.confidence == req2.confidence &&
+               req1.request_number == req2.request_number);
     }
     return 0;
 }
