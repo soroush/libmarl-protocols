@@ -22,13 +22,21 @@
 #define LIBMARL_STATE_HPP
 
 #include "details/named-object.hpp"
+#include <vector>
 
 namespace marl {
+
+class action;
+
 class state : public named_object {
+    friend class action;
 public:
-    state();
+    state() = default;
     state(const std::string& name, uint32_t id);
     ~state() = default;
+    const std::vector<action*>& actions() const;
+private:
+    std::vector<action*> m_actions;
 };
 }
 

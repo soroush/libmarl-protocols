@@ -27,6 +27,3 @@ uint8_t marl::update_table_req::type() const {
 marl::message_base* marl::update_table_req::clone() const {
     return new update_table_req{*this};
 }
-
-
-

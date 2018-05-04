@@ -3,7 +3,7 @@
 
 <xs:annotation>
     <xs:documentation xml:lang="en">
-    Markov Decision Process Document Format
+        Markov Decision Process Document Format
     </xs:documentation>
 </xs:annotation>
 

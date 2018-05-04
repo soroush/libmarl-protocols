@@ -20,9 +20,10 @@
 
 #include "state.hpp"
 
-marl::state::state() : named_object() {
-}
-
 marl::state::state(const std::string& name, uint32_t id)
     : named_object(name, id) {
+}
+
+const std::vector<marl::action*>& marl::state::actions() const {
+    return m_actions;
 }

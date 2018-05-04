@@ -19,6 +19,7 @@
  */
 
 #include "action.hpp"
+#include "state.hpp"
 #include <memory>
 
 marl::action::action() :
@@ -30,7 +31,9 @@ marl::action::action(const std::string& name,
                      uint32_t id, marl::state* state):
     marl::named_object(name, id),
     m_initial_state{state} {
-
+    if(state) {
+        m_initial_state->m_actions.push_back(this);
+    }
 }
 
 marl::state* marl::action::from() const {
@@ -44,6 +47,7 @@ void marl::action::add_transition(marl::transition* t) {
 
 void marl::action::set_transitions(std::vector<marl::transition*>&& t) {
     m_transitions = t;
+    m_initial_state->m_actions.push_back(this);
 }
 
 std::vector<marl::transition*> marl::action::transitions() const {
