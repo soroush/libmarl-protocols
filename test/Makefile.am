@@ -19,7 +19,7 @@
 ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS} -I m4
 AUTOMAKE_OPTIONS = subdir-objects
 AM_CPPFLAGS = \
-	-I$(srcdir)/.. \
+    -I$(srcdir)/.. \
     $(CPNET_CFLAGS) \
     $(XERCES_CFLAGS)
 
