@@ -34,6 +34,8 @@
 #include "message-base.hpp"
 #include "request-base.hpp"
 #include "response-base.hpp"
+#include "action-select-request.hpp"
+#include "action-select-response.hpp"
 #include "libmarl-exports.hpp"
 
 namespace marl {
@@ -43,7 +45,8 @@ public:
     client_base();
     virtual ~client_base();
     bool connect(const std::string& address, uint16_t port);
-    void send_message(const message_base* const);
+    template <typename message>
+    void send_message(const message&);
     response_base* get_response(uint32_t request_id);
     void start();
     void wait();
@@ -54,7 +57,7 @@ public:
     bool initialize(const std::string& path, uint32_t start = 0);
 protected:
     virtual void run() = 0;
-    virtual response_base* process_request(const request_base* const) = 0;
+    virtual action_select_rsp process_request(const action_select_req&) = 0;
     uint32_t m_id;
     // Module
     std::atomic_bool m_is_running;

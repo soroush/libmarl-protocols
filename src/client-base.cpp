@@ -58,12 +58,12 @@ bool marl::client_base::connect(const std::string& address, uint16_t port) {
     return true;
 }
 
-void marl::client_base::send_message(const marl::message_base* const msg) {
+template<typename message>
+void marl::client_base::send_message(const message &msg) {
     flog::logger* l = flog::logger::instance();
-
     std::stringstream str_out;
     cereal::BinaryOutputArchive ar_out(str_out);
-    ar_out(*msg);
+    ar_out(msg);
     std::string buffer = str_out.str();
     size_t new_size = buffer.size() + HEADSIZE;
     char* raw_buffer = new char[new_size];
@@ -195,10 +195,10 @@ void marl::client_base::response_worker() {
         request_base* req = m_requests.front();
         m_requests.pop_front();
         req_lck.unlock();
-        response_base* rsp = process_request(req);
-        send_message(rsp);
+        action_select_req* asrp = dynamic_cast<action_select_req*>(req);
+        action_select_rsp rsp = process_request(*asrp);
+        send_message<action_select_rsp>(rsp);
         delete req;
-        delete rsp;
     }
 }
 
