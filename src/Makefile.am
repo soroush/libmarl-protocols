@@ -44,20 +44,26 @@ nobase_libmarl_protocols_include_HEADERS =  \
     semaphore.hpp \
     message-base.hpp \
     message-base-impl.hpp \
+    message-utilities.hpp \
     client-base.hpp \
     request-base.hpp \
     request-base-impl.hpp \
+    response-base.hpp \
+    response-base-impl.hpp \
     action-select-request.hpp \
     action-select-request-impl.hpp \
     action-select-response.hpp \
     action-select-response-impl.hpp \
+    join-request.hpp \
+    join-request-impl.hpp \
+    join-response.hpp \
+    join-response-impl.hpp \
     start-request.hpp \
     start-request-impl.hpp \
     update-table-request.hpp \
     update-table-request-impl.hpp \
     update-table-response.hpp \
     update-table-response-impl.hpp \
-    response-base.hpp \
     state.hpp \
     transition.hpp \
     action.hpp \
@@ -67,15 +73,17 @@ libmarl_protocols_la_SOURCES = \
     details/named-object.cpp \
     semaphore.cpp \
     message-base.cpp \
+    message-utilities.cpp \
     client-base.cpp \
     request-base.cpp \
     action-select-request.cpp \
     action-select-response.cpp \
+    join-request.cpp \
+    join-response.cpp \
     start-request.cpp \
     update-table-request.cpp \
     update-table-response.cpp \
     response-base.cpp \
-    response-base-impl.hpp \
     state.cpp \
     transition.cpp \
     action.cpp \

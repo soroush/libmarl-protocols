@@ -560,9 +560,6 @@ tst_serialize_SOURCES = \
 tst_parser_SOURCES = \
     tst-parser.cpp
 
-tst_server_SOURCES = \
-    tst-server.cpp
-
 tst_agent_SOURCES = \
     tst-agent.cpp
 

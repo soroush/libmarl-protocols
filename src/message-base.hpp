@@ -33,8 +33,8 @@ struct LIBMARL_API message_base {
     uint32_t agent_id;
     float confidence;
     uint32_t request_number;
-    virtual uint8_t type() const = 0;
-    virtual message_base* clone() const = 0;
+    virtual uint8_t type() const;
+    virtual message_base* clone() const;
 };
 
 }

@@ -27,9 +27,10 @@
 
 namespace marl {
 
-const uint8_t MARL_ACTION_SELECT_REQ = 0;
-const uint8_t MARL_UPDATE_TABLE_REQ = 2;
-const uint8_t MARL_START_REQ = 3;
+const uint8_t MARL_JOIN_REQ = 0;
+const uint8_t MARL_ACTION_SELECT_REQ = 2;
+const uint8_t MARL_UPDATE_TABLE_REQ = 4;
+const uint8_t MARL_START_REQ = 6;
 
 struct LIBMARL_API request_base : public message_base {
     request_base() = default;

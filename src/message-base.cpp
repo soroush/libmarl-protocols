@@ -17,3 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with libmarl_protocols.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+#include "message-base.hpp"
+
+uint8_t marl::message_base::type() const {
+    return 0;
+}
+
+marl::message_base* marl::message_base::clone() const {
+    return nullptr;
+}

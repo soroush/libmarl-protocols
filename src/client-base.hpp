@@ -18,7 +18,6 @@
  * along with libmarl_protocols.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #ifndef LIBMARL_CLIENTBASE_HPP
 #define LIBMARL_CLIENTBASE_HPP
 
@@ -31,7 +30,6 @@
 #include <cpnet/cpnet-network.h>
 #include "environment.hpp"
 #include "semaphore.hpp"
-#include "message-base.hpp"
 #include "request-base.hpp"
 #include "response-base.hpp"
 #include "action-select-request.hpp"
@@ -45,8 +43,8 @@ public:
     client_base();
     virtual ~client_base();
     bool connect(const std::string& address, uint16_t port);
-    template <typename message>
-    void send_message(const message&);
+    void send_message(const action_select_req&);
+    void send_message(const action_select_rsp&);
     response_base* get_response(uint32_t request_id);
     void start();
     void wait();
@@ -54,7 +52,7 @@ public:
     void set_id(uint32_t id);
     uint32_t id() const;
     // Environment
-    bool initialize(const std::string& path, uint32_t start = 0);
+    bool initialize(const std::string& path, uint32_t start = 0, uint32_t id = 0);
 protected:
     virtual void run() = 0;
     virtual action_select_rsp process_request(const action_select_req&) = 0;
@@ -63,6 +61,9 @@ protected:
     std::atomic_bool m_is_running;
     // Envirinment
     environment m_env;
+protected:
+    uint32_t m_start_index;
+    bool join();
 private:
     void response_worker();
     void receiver_worker();

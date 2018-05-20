@@ -18,25 +18,27 @@
  * along with libmarl_protocols.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBMARL_RESPONSE_BASE_HPP
-#define LIBMARL_RESPONSE_BASE_HPP
+#ifndef MARL_JOIN_RESPONSE_IMPL_HPP
+#define MARL_JOIN_RESPONSE_IMPL_HPP
 
-#include <cstdint>
-#include "message-base.hpp"
-#include "libmarl-exports.hpp"
+#include <cereal/types/common.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/polymorphic.hpp>
 
-namespace marl {
+#include "join-response.hpp"
+#include "response-base-impl.hpp"
 
-const uint8_t MARL_JOIN_RSP = 1;
-const uint8_t MARL_ACTION_SELECT_RSP = 3;
-const uint8_t MARL_UPDATE_TABLE_RSP = 5;
+namespace cereal {
 
-struct LIBMARL_API response_base : public message_base {
-    response_base() = default;
-    response_base(const response_base&) = default;
-    virtual ~response_base() = default;
-    uint32_t requester_id;
-};
+template<class Archive>
+void serialize(Archive& archive, marl::join_rsp& m) {
+    archive(cereal::base_class<marl::response_base>(&m),
+            m.success, m.error_message);
+}
 
 }
-#endif // LIBMARL_RESPONSE_BASE_HPP
+
+CEREAL_REGISTER_TYPE(marl::join_rsp)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(marl::response_base, marl::join_rsp)
+
+#endif // MARL_JOIN_RESPONSE_IMPL_HPP

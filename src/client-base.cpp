@@ -19,22 +19,21 @@
  */
 
 #include "client-base.hpp"
-#include <flog/flog.hpp>
 #include <chrono>
 #include <sstream>
+#include <cereal/archives/binary.hpp>
+#include <flog/flog.hpp>
 #include "update-table-request-impl.hpp"
 #include "update-table-response-impl.hpp"
 #include "action-select-request-impl.hpp"
 #include "action-select-response-impl.hpp"
 #include "start-request-impl.hpp"
+#include "join-request-impl.hpp"
+#include "join-response-impl.hpp"
 #include "parser/environment-parser.hpp"
+#include "message-utilities.hpp"
 
-#include <cereal/archives/binary.hpp>
-
-#define DBUFSIZE 8192
-#define HEADSIZE (sizeof(uint32_t))
-
-using level = flog::level_t;
+using level=flog::level_t;
 
 marl::client_base::client_base() {
     cpnet_init();
@@ -58,75 +57,30 @@ bool marl::client_base::connect(const std::string& address, uint16_t port) {
     return true;
 }
 
-template<typename message>
-void marl::client_base::send_message(const message &msg) {
-    flog::logger* l = flog::logger::instance();
-    std::stringstream str_out;
-    cereal::BinaryOutputArchive ar_out(str_out);
-    ar_out(msg);
-    std::string buffer = str_out.str();
-    size_t new_size = buffer.size() + HEADSIZE;
-    char* raw_buffer = new char[new_size];
-    uint32_t size = htonl(static_cast<uint32_t>(buffer.size()));
-    memcpy(raw_buffer, &size, HEADSIZE);
-    memcpy(raw_buffer + HEADSIZE, buffer.data(), buffer.size());
-    l->log(flog::level_t::TRACE, "Sending message...");
-    l->logc(flog::level_t::TRACE, "Data size   : %z", buffer.size());
-    l->logc(flog::level_t::TRACE, "Packet size : %d", buffer.size());
-    if(cpnet_write(m_socket, raw_buffer, new_size) <= 0) {
-        l->log(level::ERROR_, "Unable to write data on socket!");
-        l->log(level::ERROR_, "Network backend returned error: %s",
-               cpnet_last_error());
-    }
-    delete[] raw_buffer;
+void marl::client_base::send_message(const marl::action_select_req& req) {
+    marl::send_message_helper<marl::action_select_req>(req, m_socket);
+}
+
+void marl::client_base::send_message(const marl::action_select_rsp& rsp) {
+    marl::send_message_helper<marl::action_select_rsp>(rsp, m_socket);
 }
 
 void marl::client_base::start() {
     m_is_running.store(true);
     flog::logger* l = flog::logger::instance();
-    char data_buffer[DBUFSIZE];
-    char header_buffer[HEADSIZE];
-    l->log(level::INFO, "Waiting for start signal from server...");
-    std::stringstream istr;
-    ssize_t read_size = cpnet_read2(m_socket, header_buffer,
-                                    HEADSIZE, MSG_WAITALL);
-    if(read_size != HEADSIZE) {
-        l->log(level::ERROR_,
-               "Unable to read header from incomming connection. Error: %s",
-               cpnet_last_error());
+    if(!join()) {
+        l->log(level::ERROR_, "Unable to join to server. "
+                              "Terminating...");
         stop();
         return;
     }
-    uint32_t expected_size = 0;
-    memcpy(&expected_size, header_buffer, HEADSIZE);
-    expected_size = ntohl(expected_size);
-    l->log(level::TRACE, "Expected buffer size is: %d", expected_size);
-    read_size = cpnet_read2(m_socket, data_buffer,
-                            expected_size, MSG_WAITALL);
-    if(read_size <= 0) {
-        l->log(level::ERROR_,
-               "Unable to read data from socket. Error: %s",
-               cpnet_last_error());
+    l->log(level::INFO, "Waiting for all agents to come online...");
+    marl::start_req msg;
+    if(!receive_message_helper<marl::start_req>(msg, m_socket)){
+        l->log(level::ERROR_, "Unable to get start command from server. "
+                              "Terminating...");
         stop();
         return;
-    }
-    if(expected_size != read_size) {
-        l->log(level::ERROR_,
-               "Expected incomming buffer size was %d, bytes only %d received.",
-               expected_size, read_size);
-        stop();
-        return;
-    }
-    istr.write(data_buffer, read_size);
-    // Process incomming message: construct buffers
-    start_req msg;
-    try {
-        cereal::BinaryInputArchive archiver(istr);
-        archiver(msg);
-    } catch(cereal::Exception& e) {
-        l->log(level::ERROR_,
-               "Unable to deserialize buffer into `message_base' object.");
-        l->logc(level::ERROR_, "Error: %s", e.what());
     }
     l->log(level::INFO, "Received start command from server.");
     l->logc(level::INFO, "Reported agent count is : %d", msg.agent_count);
@@ -160,7 +114,7 @@ uint32_t marl::client_base::id() const {
     return m_id;
 }
 
-bool marl::client_base::initialize(const std::string& path, uint32_t start) {
+bool marl::client_base::initialize(const std::string& path, uint32_t start, uint32_t id) {
     flog::logger* l = flog::logger::instance();
     l->log(level::INFO, "Reading problem instance from `%s'...", path.c_str());
 
@@ -170,14 +124,45 @@ bool marl::client_base::initialize(const std::string& path, uint32_t start) {
     mdp_parser.pre();
     doc_p.parse(path.c_str());
     m_env = mdp_parser.post_environment();
+    m_start_index = start;
+    m_id = id;
     l->log(level::INFO, "Parsing problem done.");
     l->logc(level::INFO, "Title: `%s'.", m_env.title().c_str());
     l->logc(level::INFO, "Desc.: `%s'.", m_env.description().c_str());
     l->logc(level::INFO, "Number of states: %d.", m_env.states().size());
     l->logc(level::INFO, "Number of actions: %d.", m_env.actions().size());
+    l->logc(level::INFO, "Agent ID: %d.", id);
     l->logc(level::INFO, "Initial state: %d.", start);
     return true;
     // TODO: How do we check errors?
+}
+
+bool marl::client_base::join() {
+    flog::logger* l = flog::logger::instance();
+    l->log(level::INFO, "Trying to join to server...");
+    join_req req;
+    req.agent_id = m_id;
+    req.problem_name = m_env.title();
+    if(!send_message_helper<join_req>(req, m_socket)) {
+        l->log(level::INFO, "Unable to send joining request over socket...");
+        return false;
+    } else {
+        l->log(level::INFO, "Joining request has been sent. Waiting for response...");
+    }
+    join_rsp rsp;
+    if(!receive_message_helper<join_rsp>(rsp, m_socket)) {
+        l->log(level::INFO, "Unable to receive joining response from socket...");
+        return false;
+    }
+    if(rsp.success) {
+        l->log(level::INFO, "Joining was successful.");
+        return true;
+    } else {
+        l->log(level::ERROR_, "Unable to join to server.");
+        l->logc(level::ERROR_, "Server returned error:");
+        l->logc(level::ERROR_, rsp.error_message.c_str());
+        return false;
+    }
 }
 
 /**
@@ -197,7 +182,7 @@ void marl::client_base::response_worker() {
         req_lck.unlock();
         action_select_req* asrp = dynamic_cast<action_select_req*>(req);
         action_select_rsp rsp = process_request(*asrp);
-        send_message<action_select_rsp>(rsp);
+        send_message(rsp);
         delete req;
     }
 }

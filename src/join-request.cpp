@@ -18,25 +18,12 @@
  * along with libmarl_protocols.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBMARL_RESPONSE_BASE_HPP
-#define LIBMARL_RESPONSE_BASE_HPP
+#include "join-request.hpp"
 
-#include <cstdint>
-#include "message-base.hpp"
-#include "libmarl-exports.hpp"
-
-namespace marl {
-
-const uint8_t MARL_JOIN_RSP = 1;
-const uint8_t MARL_ACTION_SELECT_RSP = 3;
-const uint8_t MARL_UPDATE_TABLE_RSP = 5;
-
-struct LIBMARL_API response_base : public message_base {
-    response_base() = default;
-    response_base(const response_base&) = default;
-    virtual ~response_base() = default;
-    uint32_t requester_id;
-};
-
+uint8_t marl::join_req::type() const {
+    return MARL_JOIN_REQ;
 }
-#endif // LIBMARL_RESPONSE_BASE_HPP
+
+marl::message_base* marl::join_req::clone() const {
+    return new join_req{*this};
+}

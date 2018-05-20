@@ -29,7 +29,7 @@
 namespace cereal {
 template<class Archive>
 void serialize(Archive& archive, marl::response_base& m) {
-    archive(cereal::base_class<marl::message_base>(&m));
+    archive(cereal::base_class<marl::message_base>(&m), m.requester_id);
 }
 }
 
