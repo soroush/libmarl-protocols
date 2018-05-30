@@ -33,7 +33,7 @@ public:
                float probability,
                float reward);
     ~transition() = default;
-    const marl::state* to() const;
+    marl::state* to() const;
     void set_target(marl::state* target);
     float probability() const;
     void set_probability(float p);

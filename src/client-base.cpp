@@ -33,7 +33,7 @@
 #include "parser/environment-parser.hpp"
 #include "message-utilities.hpp"
 
-using level=flog::level_t;
+using level = flog::level_t;
 
 marl::client_base::client_base() {
     cpnet_init();
@@ -68,25 +68,30 @@ void marl::client_base::send_message(const marl::action_select_rsp& rsp) {
 void marl::client_base::start() {
     m_is_running.store(true);
     flog::logger* l = flog::logger::instance();
-    if(!join()) {
-        l->log(level::ERROR_, "Unable to join to server. "
-                              "Terminating...");
-        stop();
-        return;
+    if(m_operation_mode == operation_mode_t::multi) {
+        if(!join()) {
+            l->log(level::ERROR_, "Unable to join to server. "
+                   "Terminating...");
+            stop();
+            return;
+        }
+        l->log(level::INFO, "Waiting for all agents to come online...");
+        marl::start_req msg;
+        if(!receive_message_helper<marl::start_req>(msg, m_socket)) {
+            l->log(level::ERROR_, "Unable to get start command from server. "
+                   "Terminating...");
+            stop();
+            return;
+        }
+        l->log(level::INFO, "Received start command from server.");
+        l->logc(level::INFO, "Reported agent count is : %d", msg.agent_count);
+        m_sender = std::thread{&client_base::response_worker, this};
+        m_receiver = std::thread{&client_base::receiver_worker, this};
+        m_main_loop = std::thread{&client_base::run, this};
+    } else if(m_operation_mode == operation_mode_t::single) {
+        // Just run single agent mode
+        m_main_loop = std::thread{&client_base::run, this};
     }
-    l->log(level::INFO, "Waiting for all agents to come online...");
-    marl::start_req msg;
-    if(!receive_message_helper<marl::start_req>(msg, m_socket)){
-        l->log(level::ERROR_, "Unable to get start command from server. "
-                              "Terminating...");
-        stop();
-        return;
-    }
-    l->log(level::INFO, "Received start command from server.");
-    l->logc(level::INFO, "Reported agent count is : %d", msg.agent_count);
-    m_sender = std::thread{&client_base::response_worker, this};
-    m_receiver = std::thread{&client_base::receiver_worker, this};
-    m_main_loop = std::thread{&client_base::run, this};
 }
 
 void marl::client_base::wait() {
@@ -114,6 +119,19 @@ uint32_t marl::client_base::id() const {
     return m_id;
 }
 
+void marl::client_base::initialize(marl::operation_mode_t ot,
+                                   marl::learning_mode_t lt) {
+    m_operation_mode = ot;
+    m_learning_mode = lt;
+    if(m_operation_mode == operation_mode_t::multi &&
+            m_learning_mode == learning_mode_t::exploit) {
+        flog::logger* l = flog::logger::instance();
+        l->log(level::ERROR_, "Exploit mode in Multi-Agent environment does not "
+               "make sense. Falling back so single-agent mode.");
+        m_operation_mode = operation_mode_t::single;
+    }
+}
+
 bool marl::client_base::initialize(const std::string& path, uint32_t start, uint32_t id) {
     flog::logger* l = flog::logger::instance();
     l->log(level::INFO, "Reading problem instance from `%s'...", path.c_str());
@@ -137,8 +155,23 @@ bool marl::client_base::initialize(const std::string& path, uint32_t start, uint
     // TODO: How do we check errors?
 }
 
+uint32_t marl::client_base::iterations() const {
+    return m_iterations;
+}
+
+void marl::client_base::set_iterations(uint32_t i) {
+    m_iterations = i;
+}
+
 bool marl::client_base::join() {
     flog::logger* l = flog::logger::instance();
+
+    if(m_operation_mode == operation_mode_t::single) {
+        l->log(level::WARN, "Trying to join to server in single agent mode!");
+        l->logc(level::WARN, "Callback will be silently ignored.");
+        return false;
+    }
+
     l->log(level::INFO, "Trying to join to server...");
     join_req req;
     req.agent_id = m_id;

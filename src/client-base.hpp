@@ -38,6 +38,16 @@
 
 namespace marl {
 
+enum class operation_mode_t {
+    single,
+    multi,
+};
+
+enum class learning_mode_t {
+    learn,
+    exploit,
+};
+
 class LIBMARL_API client_base {
 public:
     client_base();
@@ -51,8 +61,10 @@ public:
     void stop();
     void set_id(uint32_t id);
     uint32_t id() const;
-    // Environment
+    void initialize(operation_mode_t, learning_mode_t);
     bool initialize(const std::string& path, uint32_t start = 0, uint32_t id = 0);
+    uint32_t iterations() const;
+    void set_iterations(uint32_t);
 protected:
     virtual void run() = 0;
     virtual action_select_rsp process_request(const action_select_req&) = 0;
@@ -61,8 +73,11 @@ protected:
     std::atomic_bool m_is_running;
     // Envirinment
     environment m_env;
-protected:
+    // Settings
     uint32_t m_start_index;
+    operation_mode_t m_operation_mode;
+    learning_mode_t m_learning_mode;
+    uint32_t m_iterations;
     bool join();
 private:
     void response_worker();

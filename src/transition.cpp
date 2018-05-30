@@ -35,7 +35,7 @@ marl::transition::transition(marl::state* target,
     m_reward(reward) {
 }
 
-const marl::state* marl::transition::to() const {
+marl::state *marl::transition::to() const {
     return this->m_target;
 }
 
