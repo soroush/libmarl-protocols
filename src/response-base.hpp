@@ -30,6 +30,7 @@ namespace marl {
 const uint8_t MARL_JOIN_RSP = 1;
 const uint8_t MARL_ACTION_SELECT_RSP = 3;
 const uint8_t MARL_UPDATE_TABLE_RSP = 5;
+const uint8_t MARL_TERMINATE_RSP = 101;
 
 struct LIBMARL_API response_base : public message_base {
     response_base() = default;

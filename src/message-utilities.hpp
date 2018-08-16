@@ -30,13 +30,13 @@
 
 namespace marl {
 
-#define DBUFSIZE 8192
+#define DBUFSIZE 819200
 #define HEADSIZE (sizeof(uint32_t))
 
 std::unique_ptr<marl::message_base> receive_message(socket_t socket);
 
 template<typename message>
-bool send_message_helper(const message& msg, socket_t& socket) {
+bool send_message_helper(const message& msg, socket_t socket) {
     flog::logger* l = flog::logger::instance();
     std::stringstream str_out;
     cereal::BinaryOutputArchive ar_out(str_out);
@@ -65,7 +65,7 @@ bool send_message_helper(const message& msg, socket_t& socket) {
 }
 
 template<typename message>
-bool receive_message_helper(message& msg, socket_t& socket) {
+bool receive_message_helper(message& msg, socket_t socket) {
     flog::logger* l = flog::logger::instance();
     std::unique_ptr<marl::message_base> msg_ptr = receive_message(socket);
     if(!msg_ptr) {

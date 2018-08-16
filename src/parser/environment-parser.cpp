@@ -22,10 +22,10 @@
 
 marl::environment_parser::environment_parser() :
     environment_pskel() {
-    title_parser(m_string_parser);
-    description_parser(m_string_parser);
     states_parser(m_states_parser);
     actions_parser(m_actions_parser);
+    description_parser(m_string_parser);
+    title_parser(m_string_parser);
 }
 
 void marl::environment_parser::title(const std::string& name) {

@@ -30,6 +30,10 @@
 #include "start-request-impl.hpp"
 #include "join-request-impl.hpp"
 #include "join-response-impl.hpp"
+#include "terminate-request.hpp"
+#include "terminate-response.hpp"
+#include "terminate-request-impl.hpp"
+#include "terminate-response-impl.hpp"
 #include "parser/environment-parser.hpp"
 #include "message-utilities.hpp"
 
@@ -108,7 +112,6 @@ void marl::client_base::wait() {
 
 void marl::client_base::stop() {
     m_is_running.store(false);
-    wait();
 }
 
 void marl::client_base::set_id(uint32_t id) {
@@ -163,6 +166,14 @@ void marl::client_base::set_iterations(uint32_t i) {
     m_iterations = i;
 }
 
+void marl::client_base::terminate() {
+    flog::logger* l = flog::logger::instance();
+    l->log(level::INFO, "Requesting terminate for %d...", m_id);
+    marl::terminate_request req;
+    req.agent_id = m_id;
+    marl::send_message_helper<marl::terminate_request>(req, m_socket);
+}
+
 bool marl::client_base::join() {
     flog::logger* l = flog::logger::instance();
 
@@ -177,14 +188,14 @@ bool marl::client_base::join() {
     req.agent_id = m_id;
     req.problem_name = m_env.title();
     if(!send_message_helper<join_req>(req, m_socket)) {
-        l->log(level::INFO, "Unable to send joining request over socket...");
+        l->log(level::FATAL, "Unable to send joining request over socket...");
         return false;
     } else {
         l->log(level::INFO, "Joining request has been sent. Waiting for response...");
     }
     join_rsp rsp;
     if(!receive_message_helper<join_rsp>(rsp, m_socket)) {
-        l->log(level::INFO, "Unable to receive joining response from socket...");
+        l->log(level::FATAL, "Unable to receive joining response from socket...");
         return false;
     }
     if(rsp.success) {
@@ -198,6 +209,41 @@ bool marl::client_base::join() {
     }
 }
 
+void marl::client_base::set_rendezvous(uint32_t request_id) {
+    flog::logger* l = flog::logger::instance();
+    l->log(level::TRACE, "Setting rendezvous for request %d...", request_id);
+    std::lock_guard<std::mutex> lck{m_request_history_lck};
+    if(!m_request_history.insert(std::make_pair(request_id, std::make_unique<request_track>())).second) {
+        l->log(level::TRACE, "A rendezvous is already set for request %d...", request_id);
+    } else {
+        l->logc(level::TRACE, "Rendezvous for request %d is set. Rendezvous map size is: %d",
+                request_id, m_request_history.size());
+    }
+}
+
+std::unique_ptr<marl::response_base> marl::client_base::get_response(uint32_t request_id) {
+    flog::logger* l = flog::logger::instance();
+        l->log(level::TRACE, "Waiting for history lock...");
+    std::unique_lock<std::mutex> lck{m_request_history_lck};
+        l->logc(level::TRACE, "history lock released.");
+    auto found = m_request_history.find(request_id);
+    if(found == m_request_history.end()) {
+        l->log(level::FATAL,
+               "Unable to find original requets to wait for. Req number is: %d. Map size is: %d",
+               request_id, m_request_history.size());
+        return nullptr;
+    }
+    std::unique_ptr<request_track>& ptr = found->second;
+    lck.unlock();
+    std::unique_lock<std::mutex> lk{ptr->lock};
+    l->logc(level::TRACE, "condition_var lock released.");
+    l->log(level::TRACE, "Waiting on condition to be released. Req number is: %d", request_id);
+    // TODO: Wait for some time
+    ptr->waiter.wait(lk, [&ptr] {return ptr->ready;});
+    l->logc(level::TRACE, "Condition is released");
+    return std::move(ptr->response);
+}
+
 /**
  * @brief marl::client_base::response_worker
  * Takes a request from queue, processes the request, sends the response to
@@ -205,6 +251,8 @@ bool marl::client_base::join() {
  * mechanism in the next releases.
  */
 void marl::client_base::response_worker() {
+    flog::logger* l = flog::logger::instance();
+    l->log(level::INFO, "Starting response worker...");
     while(m_is_running.load()) {
         if(!m_requests_sem.wait_for(std::chrono::milliseconds{100})) {
             continue;
@@ -218,6 +266,7 @@ void marl::client_base::response_worker() {
         send_message(rsp);
         delete req;
     }
+    l->log(level::INFO, "Stopping response worker...");
 }
 
 /**
@@ -227,64 +276,13 @@ void marl::client_base::response_worker() {
  */
 void marl::client_base::receiver_worker() {
     flog::logger* l = flog::logger::instance();
-    char data_buffer[DBUFSIZE];
-    char header_buffer[HEADSIZE];
     l->log(level::INFO, "Starting message reader...");
-    while(m_is_running) {
-        ssize_t read_size = cpnet_read2(m_socket, header_buffer,
-                                        HEADSIZE, MSG_WAITALL);
-        if(read_size != HEADSIZE) {
-            l->log(level::ERROR_,
-                   "Unable to read header from incomming connection. Error: %s",
-                   cpnet_last_error());
-            stop();
-            break;
-        }
-        uint32_t expected_size = 0;
-        memcpy(&expected_size, header_buffer, HEADSIZE);
-        expected_size = ntohl(expected_size);
-        size_t total_read = 0;
-        std::stringstream istr;
-        while(total_read < expected_size) {
-            read_size = cpnet_read(m_socket, data_buffer, DBUFSIZE);
-            if(read_size < 0) {
-                l->log(level::ERROR_,
-                       "Unable to read data from incomming connection. Error: %s",
-                       cpnet_last_error());
-                stop();
-                break;
-            }
-            total_read += read_size;
-            istr.write(data_buffer, read_size);
-        }
-        if(expected_size != total_read) {
-            l->log(level::ERROR_,
-                   "Expected incomming buffer size was %d, bytes only %d received.",
-                   expected_size, total_read);
-            stop();
-            break;
-        }
-        l->log(level::TRACE, "Incomming message...");
-        // Process incomming message: construct buffers
-        std::unique_ptr<message_base> msg;
-        try {
-            cereal::BinaryInputArchive archiver(istr);
-            archiver(msg);
-        } catch(cereal::Exception& e) {
-            l->log(level::ERROR_,
-                   "Unable to deserialize buffer into `message_base' object. "
-                   "Error: %s", e.what());
-        }
-        if(!msg) {
-            l->log(level::ERROR_,
-                   "Received message object is not valid.");
-            continue;
-        }
-        // Read message, according to its type, put it in a queue
+    while(m_is_running.load()) {
+        std::unique_ptr<message_base> msg = receive_message(m_socket);
         switch(msg->type()) {
             case MARL_ACTION_SELECT_REQ:
             case MARL_UPDATE_TABLE_REQ: {
-                l->log(level::TRACE, "Message type is : request.");
+                l->log(level::TRACE, "Incomming message type is : request.");
                 std::unique_lock<std::mutex> lck{m_request_lock};
                 m_requests.push_back(dynamic_cast<request_base*>(msg->clone()));
                 lck.unlock();
@@ -293,15 +291,43 @@ void marl::client_base::receiver_worker() {
             break;
             case MARL_ACTION_SELECT_RSP:
             case MARL_UPDATE_TABLE_RSP: {
-                l->log(level::TRACE, "Message type is : response.");
-                std::unique_lock<std::mutex> lck{m_response_lock};
-                m_responses.push_back(dynamic_cast<response_base*>(msg->clone()));
-                lck.unlock();
-                m_responses_sem.notify();
+                l->log(level::TRACE, "Incomming message type is : response.");
+                std::lock_guard<std::mutex> lck{m_request_history_lck};
+                // Note: Ownership of this pointer will be taken away
+                marl::response_base* rsp = dynamic_cast<response_base*>(msg->clone());
+                if(!rsp) {
+                    l->log(level::FATAL, "Unable to cast received response to `marl::response_base*`...");
+                    delete rsp;
+                    continue;
+                }
+                auto found = m_request_history.find(rsp->request_number);
+                if(found == m_request_history.end()) {
+                    l->log(level::FATAL, "Unable to find original request for received response: %d, Map size is: %d",
+                           rsp->request_number, m_request_history.size());
+                } else {
+                    {
+                        l->log(level::TRACE, "Waiting on condition_var lock to notify...");
+                        std::lock_guard<std::mutex> lk(found->second->lock);
+                        l->logc(level::TRACE, "condition_var lock for notify is released.");
+                        found->second->response = std::unique_ptr<marl::response_base>(rsp);
+                        found->second->ready = true;
+                    }
+                    l->logc(level::TRACE, "notifying the cond_var...");
+                    found->second->waiter.notify_one();
+                }
+            }
+            break;
+            case MARL_TERMINATE_RSP: {
+                l->log(level::TRACE, "Incomming message type is : terminate.");
+                l->log(level::TRACE, "Terminating...");
+                stop();
+                cpnet_close(m_socket);
             }
             break;
             default:
                 break;
         }
     }
+    l->log(level::INFO, "Stopping message reader...");
+    // l->flush(std::chrono::seconds{10});
 }

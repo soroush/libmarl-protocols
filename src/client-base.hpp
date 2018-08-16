@@ -24,6 +24,7 @@
 #include <string>
 #include <cstdint>
 #include <list>
+#include <map>
 #include <mutex>
 #include <thread>
 #include <atomic>
@@ -55,7 +56,6 @@ public:
     bool connect(const std::string& address, uint16_t port);
     void send_message(const action_select_req&);
     void send_message(const action_select_rsp&);
-    response_base* get_response(uint32_t request_id);
     void start();
     void wait();
     void stop();
@@ -68,6 +68,7 @@ public:
 protected:
     virtual void run() = 0;
     virtual action_select_rsp process_request(const action_select_req&) = 0;
+    void terminate();
     uint32_t m_id;
     // Module
     std::atomic_bool m_is_running;
@@ -79,20 +80,31 @@ protected:
     learning_mode_t m_learning_mode;
     uint32_t m_iterations;
     bool join();
+    struct request_track {
+        bool ready = false;
+        std::mutex lock;
+        std::condition_variable waiter;
+        std::unique_ptr<marl::response_base> response;
+    };
+    void set_rendezvous(uint32_t request_id);
+    std::unique_ptr<marl::response_base> get_response(uint32_t request_id);
+
+    std::map<uint32_t, std::unique_ptr<request_track>> m_request_history;
+    std::mutex m_response_lck;
+    std::mutex m_request_history_lck;
+
 private:
     void response_worker();
     void receiver_worker();
     tidm::semaphore m_requests_sem;
-    tidm::semaphore m_responses_sem;
     std::mutex m_request_lock;
-    std::mutex m_response_lock;
+    // std::mutex m_response_lock;
     std::thread m_sender;
     std::thread m_receiver;
     std::thread m_main_loop;
     socket_t m_socket;
     // Incomming message queues
     std::list<request_base*> m_requests;
-    std::list<response_base*> m_responses;
 };
 
 }

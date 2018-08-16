@@ -1,6 +1,6 @@
 /*
- * Copyright 2017 - Roya Ghasemzade <roya@ametisco.ir>
- * Copyright 2017 - Soroush Rabiei <soroush@ametisco.ir>
+ * Copyright 2018 - Roya Ghasemzade <roya@ametisco.ir>
+ * Copyright 2018 - Soroush Rabiei <soroush@ametisco.ir>
  *
  * This file is part of libmarl_protocols.
  *
@@ -18,28 +18,22 @@
  * along with libmarl_protocols.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MARL_REQUEST_BASE_HPP
-#define MARL_REQUEST_BASE_HPP
+#ifndef MARL_TERMINATE_REQUEST_IMPL_HPP
+#define MARL_TERMINATE_REQUEST_IMPL_HPP
 
-#include <cstdint>
-#include "message-base.hpp"
-#include "libmarl-exports.hpp"
+#include <cereal/types/common.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include "message-base-impl.hpp"
+#include "terminate-request.hpp"
 
-namespace marl {
-
-const uint8_t MARL_JOIN_REQ = 0;
-const uint8_t MARL_ACTION_SELECT_REQ = 2;
-const uint8_t MARL_UPDATE_TABLE_REQ = 4;
-const uint8_t MARL_START_REQ = 6;
-const uint8_t MARL_TERMINATE_REQ = 100;
-
-struct LIBMARL_API request_base : public message_base {
-    request_base() = default;
-    request_base(const request_base&) = default;
-    virtual ~request_base() = default;
-    uint32_t state_id;
-};
-
+namespace cereal {
+template<class Archive>
+void serialize(Archive& archive, marl::terminate_request& m) {
+    archive(cereal::base_class<marl::message_base>(&m));
+}
 }
 
-#endif // MARL_REQUEST_BASE_HPP
+CEREAL_REGISTER_TYPE(marl::terminate_request)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(marl::message_base, marl::terminate_request)
+
+#endif // MARL_TERMINATE_REQUEST_IMPL_HPP

@@ -18,28 +18,13 @@
  * along with libmarl_protocols.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MARL_REQUEST_BASE_HPP
-#define MARL_REQUEST_BASE_HPP
+#include "terminate-request.hpp"
+#include "request-base.hpp"
 
-#include <cstdint>
-#include "message-base.hpp"
-#include "libmarl-exports.hpp"
-
-namespace marl {
-
-const uint8_t MARL_JOIN_REQ = 0;
-const uint8_t MARL_ACTION_SELECT_REQ = 2;
-const uint8_t MARL_UPDATE_TABLE_REQ = 4;
-const uint8_t MARL_START_REQ = 6;
-const uint8_t MARL_TERMINATE_REQ = 100;
-
-struct LIBMARL_API request_base : public message_base {
-    request_base() = default;
-    request_base(const request_base&) = default;
-    virtual ~request_base() = default;
-    uint32_t state_id;
-};
-
+uint8_t marl::terminate_request::type() const {
+    return MARL_TERMINATE_REQ;
 }
 
-#endif // MARL_REQUEST_BASE_HPP
+marl::message_base* marl::terminate_request::clone() const {
+    return new marl::terminate_request(*this);
+}

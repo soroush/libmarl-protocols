@@ -45,6 +45,7 @@ private:
     marl::state* s;
     marl::state_pointer_parser m_tparser;
     marl::probability_parser m_pparser;
+    xml_schema::decimal_pimpl m_decimal_parser;
 };
 
 }

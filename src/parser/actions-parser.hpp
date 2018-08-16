@@ -28,8 +28,8 @@
 namespace marl {
 class actions_parser : public actions_pskel {
 public:
-	actions_parser();
-    void action (::marl::action*) override;
+    actions_parser();
+    void action(::marl::action*) override;
     std::vector<marl::action*> post_actions() override;
     void set_states(const std::vector<marl::state*>& states);
 private:

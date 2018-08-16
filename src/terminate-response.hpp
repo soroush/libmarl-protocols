@@ -1,6 +1,6 @@
 /*
- * Copyright 2017 - Roya Ghasemzade <roya@ametisco.ir>
- * Copyright 2017 - Soroush Rabiei <soroush@ametisco.ir>
+ * Copyright 2018 - Roya Ghasemzade <roya@ametisco.ir>
+ * Copyright 2018 - Soroush Rabiei <soroush@ametisco.ir>
  *
  * This file is part of libmarl_protocols.
  *
@@ -18,8 +18,8 @@
  * along with libmarl_protocols.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MARL_REQUEST_BASE_HPP
-#define MARL_REQUEST_BASE_HPP
+#ifndef LIBMARL_TERMINATE_RESPONSE_HPP
+#define LIBMARL_TERMINATE_RESPONSE_HPP
 
 #include <cstdint>
 #include "message-base.hpp"
@@ -27,19 +27,13 @@
 
 namespace marl {
 
-const uint8_t MARL_JOIN_REQ = 0;
-const uint8_t MARL_ACTION_SELECT_REQ = 2;
-const uint8_t MARL_UPDATE_TABLE_REQ = 4;
-const uint8_t MARL_START_REQ = 6;
-const uint8_t MARL_TERMINATE_REQ = 100;
-
-struct LIBMARL_API request_base : public message_base {
-    request_base() = default;
-    request_base(const request_base&) = default;
-    virtual ~request_base() = default;
-    uint32_t state_id;
+struct LIBMARL_API terminate_response : public message_base {
+    terminate_response() = default;
+    terminate_response(const terminate_response&) = default;
+    ~terminate_response() = default;
+    uint8_t type() const override;
+    message_base* clone() const override;
 };
-
 }
 
-#endif // MARL_REQUEST_BASE_HPP
+#endif // LIBMARL_TERMINATE_RESPONSE_HPP

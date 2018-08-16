@@ -58,6 +58,10 @@ nobase_libmarl_protocols_include_HEADERS =  \
     join-request-impl.hpp \
     join-response.hpp \
     join-response-impl.hpp \
+    terminate-request.hpp \
+    terminate-request-impl.hpp \
+    terminate-response.hpp \
+    terminate-response-impl.hpp \
     start-request.hpp \
     start-request-impl.hpp \
     update-table-request.hpp \
@@ -70,6 +74,7 @@ nobase_libmarl_protocols_include_HEADERS =  \
     environment.hpp
 
 libmarl_protocols_la_SOURCES = \
+    $(nobase_libmarl_protocols_include_HEADERS) \
     details/named-object.cpp \
     semaphore.cpp \
     message-base.cpp \
@@ -80,6 +85,8 @@ libmarl_protocols_la_SOURCES = \
     action-select-response.cpp \
     join-request.cpp \
     join-response.cpp \
+    terminate-request.cpp \
+    terminate-response.cpp \
     start-request.cpp \
     update-table-request.cpp \
     update-table-response.cpp \

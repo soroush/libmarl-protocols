@@ -28,9 +28,8 @@ std::unique_ptr<marl::message_base> marl::receive_message(socket_t socket) {
     ssize_t read_size = cpnet_read(socket, header_buffer, HEADSIZE);
     if(read_size != HEADSIZE) {
         l->log(flog::level_t::ERROR_,
-               "Unable to read header from incomming connection. Error: %s",
-               cpnet_last_error());
-        l->logc(flog::level_t::ERROR_, "Read header size: %z", read_size);
+               "Unable to read header from incomming connection.");
+        l->logc(flog::level_t::ERROR_, "Read header size: %zu", read_size);
         return nullptr;
     }
     uint32_t expected_size = 0;
