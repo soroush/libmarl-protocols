@@ -75,7 +75,7 @@ protected:
     // Envirinment
     environment m_env;
     // Settings
-    uint32_t m_start_index;
+    int32_t m_start_index;
     operation_mode_t m_operation_mode;
     learning_mode_t m_learning_mode;
     uint32_t m_iterations;
